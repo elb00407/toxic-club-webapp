@@ -25,7 +25,7 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
       fetch(`/api/pcs/availability?pcId=${pcId}&date=${date}`)
         .then((r) => r.json())
         .then((d) => setBusy(d.busy || []))
-        .catch(() => setBusy([]);
+        .catch(() => setBusy([]));   // ✅ исправлено: правильное закрытие скобок
     }
   }, [pcId, date]);
 
