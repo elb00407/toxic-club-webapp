@@ -13,7 +13,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     const initEl = document.getElementById("__initData") as HTMLInputElement | null;
     const initData = initEl?.value || "";
     if (initData) {
-      setUser({ id: "tg", username: undefined });
+      setUser({ id: initData }); // инициализируем по маркеру
       setReady(true);
       return;
     }
@@ -33,6 +33,8 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     const id = `local-${Date.now()}`;
     const u: User = { id, username: nickname || undefined, email: email || undefined };
     localStorage.setItem("toxicskill_user", JSON.stringify(u));
+    const initEl = document.getElementById("__initData") as HTMLInputElement | null;
+    if (initEl) initEl.value = `local:${id}`; // синхронизируем initData для API
     setUser(u);
   };
 

@@ -11,24 +11,15 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
   const [start, setStart] = useState<string>("");
   const [end, setEnd] = useState<string>("");
   const [initData, setInitData] = useState<string>("");
-  const [localId, setLocalId] = useState<string>("");
 
   const [busy, setBusy] = useState<{ startsAt: string; endsAt: string }[]>([]);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
+  // Всегда заполняем initData (синхронизировано с WebAppShell)
   useEffect(() => {
     const el = document.getElementById("__initData") as HTMLInputElement | null;
     const init = el?.value || "";
-    setInitData(init);
-    if (!init) {
-      try {
-        const raw = localStorage.getItem("toxicskill_user");
-        if (raw) {
-          const u = JSON.parse(raw);
-          if (u?.id) setLocalId(u.id);
-        }
-      } catch {}
-    }
+    setInitData(init || `local:${Date.now()}`);
   }, []);
 
   useEffect(() => {
@@ -59,17 +50,12 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
     if (e <= s) return setToast({ message: "Конец должен быть позже начала", type: "error" });
     if (!durationOk) return setToast({ message: `Минимум 1 час, максимум ${maxHours} часов`, type: "error" });
 
-    const payload: any = {
+    const payload = {
       pcId,
       startsAt: s.toISOString(),
       endsAt: e.toISOString(),
-      initData: initData || undefined,
-      localId: initData ? undefined : localId || `guest-${Date.now()}`,
+      initData: initData, // гарантированно непустой
     };
-
-    if (!payload.pcId || !payload.startsAt || !payload.endsAt || (!payload.initData && !payload.localId)) {
-      return setToast({ message: "Поля обязательны: pcId, startsAt, endsAt, initData/localId", type: "error" });
-    }
 
     const res = await fetch("/api/bookings/create", {
       method: "POST",

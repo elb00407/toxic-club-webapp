@@ -53,11 +53,21 @@ export default function ModernCalendar({
       {(open || inline) && (
         <div className="calendar__panel">
           <div className="calendar__header">
-            <button className="tox-button tox-button--sm" onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() - 1, 1))}>←</button>
+            <button
+              className="tox-button tox-button--sm"
+              onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() - 1, 1))}
+            >
+              ←
+            </button>
             <div className="calendar__title">
               {current.toLocaleString("ru-RU", { month: "long", year: "numeric" })}
             </div>
-            <button className="tox-button tox-button--sm" onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() + 1, 1))}>→</button>
+            <button
+              className="tox-button tox-button--sm"
+              onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() + 1, 1))}
+            >
+              →
+            </button>
           </div>
 
           <div className="calendar__week">

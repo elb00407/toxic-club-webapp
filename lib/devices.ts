@@ -21,7 +21,7 @@ const stdPCs: DeviceItem[] = Array.from({ length: stdCount }).map((_, i) => ({
   status: "active",
   specs: { cpu: "Ryzen 5 5600", gpu: i % 2 ? "RTX 4060" : "RTX 3060 Ti" },
   busyState: (i % 7 === 0) ? "busy" : "free",
-  imageUrl: undefined, // пример: "/devices/pc-01.jpg"
+  imageUrl: undefined,
 }));
 
 const vipPCs: DeviceItem[] = Array.from({ length: vipCount }).map((_, i) => ({
