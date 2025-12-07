@@ -11,13 +11,24 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
   const [start, setStart] = useState<string>("");
   const [end, setEnd] = useState<string>("");
   const [initData, setInitData] = useState<string>("");
+  const [localId, setLocalId] = useState<string>("");
 
   const [busy, setBusy] = useState<{ startsAt: string; endsAt: string }[]>([]);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   useEffect(() => {
     const el = document.getElementById("__initData") as HTMLInputElement | null;
-    setInitData(el?.value || "");
+    const init = el?.value || "";
+    setInitData(init);
+    if (!init) {
+      try {
+        const raw = localStorage.getItem("toxicskill_user");
+        if (raw) {
+          const u = JSON.parse(raw);
+          if (u?.id) setLocalId(u.id);
+        }
+      } catch {}
+    }
   }, []);
 
   useEffect(() => {
@@ -40,33 +51,38 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
   }, [date, start, end, maxHours]);
 
   const submit = async () => {
+    if (!pcId) return setToast({ message: "Выберите ПК/PS5", type: "error" });
     if (!date || !start || !end) return setToast({ message: "Выберите дату и время", type: "error" });
+
     const s = new Date(`${date}T${start}:00.000Z`);
     const e = new Date(`${date}T${end}:00.000Z`);
     if (e <= s) return setToast({ message: "Конец должен быть позже начала", type: "error" });
     if (!durationOk) return setToast({ message: `Минимум 1 час, максимум ${maxHours} часов`, type: "error" });
 
-    const endpoint = pcId.startsWith("pc-") || pcId.startsWith("ps5-") ? "/api/bookings/create" : "/api/auto/book";
     const payload: any = {
+      pcId,
       startsAt: s.toISOString(),
       endsAt: e.toISOString(),
-      initData,
+      initData: initData || undefined,
+      localId: initData ? undefined : localId || `guest-${Date.now()}`,
     };
-    if (pcId === "vip-auto") payload.isVip = true;
-    if (pcId === "std-auto") payload.isVip = false;
-    if (pcId.startsWith("pc-") || pcId.startsWith("ps5-")) payload.pcId = pcId;
 
-    const res = await fetch(endpoint, {
+    // минимальная валидация перед отправкой
+    if (!payload.pcId || !payload.startsAt || !payload.endsAt || (!payload.initData && !payload.localId)) {
+      return setToast({ message: "Поля обязательны: pcId, startsAt, endsAt, initData/localId", type: "error" });
+    }
+
+    const res = await fetch("/api/bookings/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    }).then((r) => r.json());
+    }).then((r) => r.json()).catch(() => ({ ok: false, error: "Network error" }));
 
     if (res.ok) {
       setToast({ message: `Бронь подтверждена: ${res.booking.id}`, type: "success" });
-      setTimeout(() => window.Telegram?.WebApp?.close(), 2000);
+      setTimeout(() => window.Telegram?.WebApp?.close?.(), 2000);
     } else {
-      setToast({ message: `Ошибка: ${res.error}`, type: "error" });
+      setToast({ message: `Ошибка: ${res.error || "Неизвестная ошибка"}`, type: "error" });
     }
   };
 

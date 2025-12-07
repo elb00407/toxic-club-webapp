@@ -6,8 +6,8 @@ function useTileInertia() {
   let vx = 0, vy = 0;
   let tx = 0, ty = 0;
   let rx = 0, ry = 0;
-  const k = 0.22; // чуть жестче для читаемости
-  const d = 0.16;
+  const k = 0.24;
+  const d = 0.18;
   let raf = 0;
   const elRef = useRef<HTMLButtonElement | null>(null);
 
@@ -57,8 +57,8 @@ export default function DeviceTile({
     const y = e.clientY - rect.top;
     const midX = rect.width / 2;
     const midY = rect.height / 2;
-    const rotY = ((x - midX) / midX) * 7;
-    const rotX = -((y - midY) / midY) * 7;
+    const rotY = ((x - midX) / midX) * 8;
+    const rotX = -((y - midY) / midY) * 8;
     setTarget(rotX, rotY);
     el.style.setProperty("--glowX", `${(x / rect.width) * 100}%`);
     el.style.setProperty("--glowY", `${(y / rect.height) * 100}%`);

@@ -43,7 +43,7 @@ export default function ModernCalendar({
   const isDisabled = (d: Date) => d < new Date(today.toDateString()) || d > maxDate;
 
   return (
-    <div className="calendar calendar--v3" ref={ref}>
+    <div className="calendar calendar--v4" ref={ref}>
       {!inline && (
         <button className="input w-full text-left" onClick={() => setOpen((o) => !o)}>
           {value || "Выберите дату"}
@@ -51,7 +51,7 @@ export default function ModernCalendar({
       )}
 
       {(open || inline) && (
-        <div className="calendar__panel calendar__panel--v3">
+        <div className="calendar__panel calendar__panel--v4">
           <div className="calendar__header">
             <button className="tox-button tox-button--sm" onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() - 1, 1))}>←</button>
             <div className="calendar__title">
@@ -73,7 +73,7 @@ export default function ModernCalendar({
               return (
                 <button
                   key={i}
-                  className={`calendar__day calendar__day--v3 ${active ? "calendar__day--active" : ""}`}
+                  className={`calendar__day calendar__day--v4 ${active ? "calendar__day--active" : ""}`}
                   disabled={disabled}
                   onClick={() => {
                     onChange(toISO(date));

@@ -9,7 +9,6 @@ export default function WebAppShell({
   onBrandClick?: () => void;
 }) {
   const [isMobile, setIsMobile] = useState(false);
-
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
     const update = () => setIsMobile(mq.matches);

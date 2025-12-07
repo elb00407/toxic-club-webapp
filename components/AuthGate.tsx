@@ -1,10 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 
+type User = { id: string; username?: string; email?: string };
+
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
-  const [user, setUser] = useState<{ id: string; username?: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [nickname, setNickname] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     const initEl = document.getElementById("__initData") as HTMLInputElement | null;
@@ -17,7 +20,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     const raw = localStorage.getItem("toxicskill_user");
     if (raw) {
       try {
-        const parsed = JSON.parse(raw);
+        const parsed = JSON.parse(raw) as User;
         setUser(parsed);
         setReady(true);
         return;
@@ -27,7 +30,8 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   }, []);
 
   const register = () => {
-    const u = { id: `local-${Date.now()}`, username: nickname || undefined };
+    const id = `local-${Date.now()}`;
+    const u: User = { id, username: nickname || undefined, email: email || undefined };
     localStorage.setItem("toxicskill_user", JSON.stringify(u));
     setUser(u);
   };
@@ -35,14 +39,26 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   if (!ready) return null;
   if (!user) {
     return (
-      <div className="card">
-        <div className="grid-header">
-          <div className="grid-title">Вход</div>
-          <div className="grid-subtitle">Если вы вышли из Telegram, создайте локальный профиль</div>
+      <div className="auth-card">
+        <div className="auth-header">
+          <div className="auth-title">Вход в toxicskill</div>
+          <div className="auth-subtitle">Создайте локальный профиль, если ушли из Telegram</div>
         </div>
-        <div style={{ display: "grid", gap: "10px", maxWidth: 360 }}>
-          <input className="input" placeholder="Никнейм (необязательно)" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+
+        <div className="auth-fields">
+          <div className="field">
+            <label className="field-label">Никнейм</label>
+            <input className="field-input" placeholder="Например: tox-user" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+          </div>
+          <div className="field">
+            <label className="field-label">Email (необязательно)</label>
+            <input className="field-input" type="email" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="auth-actions">
           <button className="tox-button" onClick={register}>Войти</button>
+          <div className="auth-hint">Данные хранятся локально на вашем устройстве.</div>
         </div>
       </div>
     );
