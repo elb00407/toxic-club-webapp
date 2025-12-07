@@ -1,13 +1,14 @@
 "use client";
 
-type PcItem = { id: string; label: string; isVip?: boolean; platform: "PC" | "PS5"; status: "active" | "maintenance" };
-export default function PcCards({
-  items,
-  onPick,
-}: {
-  items: PcItem[];
-  onPick: (item: PcItem) => void;
-}) {
+export type PcItem = {
+  id: string;
+  label: string;
+  isVip?: boolean;
+  platform: "PC" | "PS5";
+  status: "active" | "maintenance";
+};
+
+export default function PcCards({ items, onPick }: { items: PcItem[]; onPick: (item: PcItem) => void }) {
   return (
     <div className="grid gap-12 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
       {items.map((i) => (
@@ -26,7 +27,6 @@ export default function PcCards({
               <div className="text-lg font-semibold mt-1">{i.label}</div>
             </div>
             <div
-              title={i.status}
               style={{
                 width: 10,
                 height: 10,

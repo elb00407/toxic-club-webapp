@@ -9,10 +9,11 @@ type Picked = { pcId: string; platform: "PC" | "PS5" };
 export default function Page() {
   const [picked, setPicked] = useState<Picked | null>(null);
 
+  // Явно указываем platform как литералы "PC" | "PS5"
   const items = [
-    { id: "std-auto", label: "Автоназначение • Стандарт", isVip: false, platform: "PC", status: "active" },
-    { id: "vip-auto", label: "Автоназначение • VIP", isVip: true, platform: "PC", status: "active" },
-    { id: "ps5-auto", label: "PlayStation 5", platform: "PS5", status: "active" },
+    { id: "std-auto", label: "Автоназначение • Стандарт", isVip: false, platform: "PC" as const, status: "active" as const },
+    { id: "vip-auto", label: "Автоназначение • VIP", isVip: true, platform: "PC" as const, status: "active" as const },
+    { id: "ps5-auto", label: "PlayStation 5", platform: "PS5" as const, status: "active" as const },
   ];
 
   return (
@@ -25,7 +26,7 @@ export default function Page() {
             </div>
             <PcCards
               items={items}
-              onPick={(i) => setPicked({ pcId: i.id, platform: i.platform as "PC" | "PS5" })}
+              onPick={(i) => setPicked({ pcId: i.id, platform: i.platform })}
             />
           </div>
         )}
