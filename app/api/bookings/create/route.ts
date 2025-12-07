@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
     return new Response(JSON.stringify({ ok: false, error: "Нет данных пользователя" }), { status: 401 });
   }
 
-  // Mock бронь
   const booking = {
     id: `mock-${Date.now()}`,
     pcId,
