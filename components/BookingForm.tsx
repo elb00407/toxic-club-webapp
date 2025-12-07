@@ -72,7 +72,7 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
 
   return (
     <div className="booking">
-      <div className="grid md:grid-cols-2 gap-10">
+      <div className="grid md:grid-cols-2 gap-12">
         <div>
           <div className="label">Дата</div>
           <ModernCalendar value={date} onChange={setDate} />

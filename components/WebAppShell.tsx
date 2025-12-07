@@ -9,6 +9,7 @@ export default function WebAppShell({
   onBrandClick?: () => void;
 }) {
   const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
     const update = () => setIsMobile(mq.matches);
@@ -27,7 +28,6 @@ export default function WebAppShell({
         toxicskill
       </button>
       <div className="container">{children}</div>
-      {/* Telegram вставит initData */}
       <input id="__initData" type="hidden" />
     </div>
   );

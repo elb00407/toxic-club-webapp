@@ -14,7 +14,7 @@ export default function FancyTimePicker({
   onChange,
   busyRanges,
   maxHours,
-  defaultStartStep = 16, // 08:00
+  defaultStartStep = 18, // 09:00
   defaultDurationH = 2,
 }: {
   onChange: (startHHMM: string, endHHMM: string) => void;
@@ -23,7 +23,7 @@ export default function FancyTimePicker({
   defaultStartStep?: number;
   defaultDurationH?: number;
 }) {
-  const STEPS = 48; // каждые 30 минут
+  const STEPS = 48;
   const [startStep, setStartStep] = useState(defaultStartStep);
   const [durationH, setDurationH] = useState(defaultDurationH);
 
@@ -39,7 +39,7 @@ export default function FancyTimePicker({
     return map;
   }, [busyRanges]);
 
-  const durationSteps = Math.max(2, Math.min(Math.round(durationH * 2), maxHours * 2)); // минимум 1 час
+  const durationSteps = Math.max(2, Math.min(Math.round(durationH * 2), maxHours * 2));
   const endStep = Math.min(startStep + durationSteps, STEPS);
 
   useEffect(() => {
@@ -70,26 +70,32 @@ export default function FancyTimePicker({
   const durations = [1, 2, 3, 4, 5, 6, 7, 8].filter((h) => h <= maxHours);
 
   return (
-    <div className="fancy-time">
+    <div className="fancy-time fancy-time--v2">
       <div className="fancy-time__header">
-        <span className="fancy-time__label">Начало</span>
-        <span className="fancy-time__value">{toHHMM(startStep)}</span>
-        <span className="fancy-time__label">Длительность</span>
-        <div className="fancy-time__chips">
-          {durations.map((h) => (
-            <button key={h} className={`chip ${h === durationH ? "chip--active" : ""}`} onClick={() => setDurationH(h)}>
-              {h} ч
-            </button>
-          ))}
+        <div className="ft-group">
+          <div className="fancy-time__label">Начало</div>
+          <div className="fancy-time__value">{toHHMM(startStep)}</div>
         </div>
-        <span className="fancy-time__label">Конец</span>
-        <span className="fancy-time__value">{toHHMM(endStep)}</span>
+        <div className="ft-group">
+          <div className="fancy-time__label">Длительность</div>
+          <div className="fancy-time__chips">
+            {durations.map((h) => (
+              <button key={h} className={`chip ${h === durationH ? "chip--active" : ""}`} onClick={() => setDurationH(h)}>
+                {h} ч
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="ft-group">
+          <div className="fancy-time__label">Конец</div>
+          <div className="fancy-time__value">{toHHMM(endStep)}</div>
+        </div>
       </div>
 
-      <div className="fancy-time__track">
+      <div className="fancy-time__track fancy-time__track--v2">
         <div className="fancy-time__grid">
           {Array.from({ length: STEPS }).map((_, i) => (
-            <div key={i} className="fancy-time__cell" style={{ background: blocked[i] ? "rgba(255,80,80,0.18)" : "transparent" }} />
+            <div key={i} className={`fancy-time__cell ${blocked[i] ? "fancy-time__cell--busy" : ""}`} />
           ))}
         </div>
 
