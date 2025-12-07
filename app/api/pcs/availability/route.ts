@@ -1,13 +1,18 @@
-import { mockAvailability } from "@/lib/mock";
-import { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const pcId = req.nextUrl.searchParams.get("pcId");
-  const date = req.nextUrl.searchParams.get("date");
+// Мок: занято с 14:00 до 16:30 (UTC)
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const pcId = searchParams.get("pcId");
+  const date = searchParams.get("date"); // YYYY-MM-DD
+
   if (!pcId || !date) {
-    return new Response(JSON.stringify({ ok: false, error: "pcId/date обязателен" }), { status: 400 });
+    return NextResponse.json({ busy: [] });
   }
 
-  const busy = mockAvailability(pcId, date);
-  return Response.json({ ok: true, busy });
+  const busy = [
+    { startsAt: `${date}T14:00:00.000Z`, endsAt: `${date}T16:30:00.000Z` },
+  ];
+
+  return NextResponse.json({ busy });
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import FancyTimePicker from "./FancyTimePicker";
+import ProTimeSlider from "./ProTimeSlider";
 import ModernCalendar from "./ModernCalendar";
 import Toast from "./Toast";
 
@@ -11,15 +11,15 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
   const [start, setStart] = useState<string>("");
   const [end, setEnd] = useState<string>("");
   const [initData, setInitData] = useState<string>("");
+  const [mode, setMode] = useState<"telegram" | "local">("local");
 
   const [busy, setBusy] = useState<{ startsAt: string; endsAt: string }[]>([]);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Всегда заполняем initData (синхронизировано с WebAppShell)
   useEffect(() => {
     const el = document.getElementById("__initData") as HTMLInputElement | null;
-    const init = el?.value || "";
-    setInitData(init || `local:${Date.now()}`);
+    const val = el?.value || "";
+    if (val) { setInitData(val); setMode("telegram"); } else { setInitData(""); setMode("local"); }
   }, []);
 
   useEffect(() => {
@@ -50,12 +50,9 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
     if (e <= s) return setToast({ message: "Конец должен быть позже начала", type: "error" });
     if (!durationOk) return setToast({ message: `Минимум 1 час, максимум ${maxHours} часов`, type: "error" });
 
-    const payload = {
-      pcId,
-      startsAt: s.toISOString(),
-      endsAt: e.toISOString(),
-      initData: initData, // гарантированно непустой
-    };
+    const payload = mode === "telegram"
+      ? { pcId, startsAt: s.toISOString(), endsAt: e.toISOString(), initData }
+      : { pcId, startsAt: s.toISOString(), endsAt: e.toISOString(), localId: `local-${Date.now()}` };
 
     const res = await fetch("/api/bookings/create", {
       method: "POST",
@@ -67,7 +64,12 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
       setToast({ message: `Бронь подтверждена: ${res.booking.id}`, type: "success" });
       setTimeout(() => window.Telegram?.WebApp?.close?.(), 2000);
     } else {
-      setToast({ message: `Ошибка: ${res.error || "Неизвестная ошибка"}`, type: "error" });
+      if (mode === "telegram") {
+        setMode("local");
+        setToast({ message: "Telegram подпись неверна — переключил в локальный режим. Повторите подтверждение.", type: "error" });
+      } else {
+        setToast({ message: `Ошибка: ${res.error || "Неизвестная ошибка"}`, type: "error" });
+      }
     }
   };
 
@@ -80,14 +82,7 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
         </div>
         <div>
           <div className="label">Время</div>
-          <FancyTimePicker
-            busyRanges={busy}
-            maxHours={maxHours}
-            onChange={(s, e) => {
-              setStart(s);
-              setEnd(e);
-            }}
-          />
+          <ProTimeSlider busyRanges={busy} maxHours={maxHours} onChange={(s, e) => { setStart(s); setEnd(e); }} />
         </div>
       </div>
 

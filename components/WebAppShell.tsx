@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 
+declare global { interface Window { Telegram?: any; } }
+
 export default function WebAppShell({
   children,
   onBrandClick,
@@ -18,14 +20,12 @@ export default function WebAppShell({
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // Гарантируем, что initData не пустой (устранение ошибки initData обязателен)
+  // Инициализация initData из Telegram (если доступно)
   useEffect(() => {
     const el = document.getElementById("__initData") as HTMLInputElement | null;
-    if (el && !el.value) {
-      const localRaw = localStorage.getItem("toxicskill_user");
-      const localId = localRaw ? (() => { try { return JSON.parse(localRaw)?.id || ""; } catch { return ""; } })() : "";
-      el.value = `local:${localId || "guest"}`; // всегда будет непустой маркер
-    }
+    if (!el) return;
+    const tgInit = window.Telegram?.WebApp?.initData || "";
+    el.value = tgInit || ""; // пустое, если не в Telegram
   }, []);
 
   return (

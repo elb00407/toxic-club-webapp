@@ -3,32 +3,21 @@ import { useEffect, useRef } from "react";
 import type { DeviceItem } from "@/lib/devices";
 
 function useTileInertia() {
-  let vx = 0, vy = 0;
-  let tx = 0, ty = 0;
-  let rx = 0, ry = 0;
-  const k = 0.22;
-  const d = 0.16;
+  let vx = 0, vy = 0, tx = 0, ty = 0, rx = 0, ry = 0;
+  const k = 0.20, d = 0.14;
   let raf = 0;
   const elRef = useRef<HTMLButtonElement | null>(null);
 
   const step = () => {
-    const ax = (tx - rx) * k;
-    const ay = (ty - ry) * k;
-    vx = (vx + ax) * (1 - d);
-    vy = (vy + ay) * (1 - d);
+    const ax = (tx - rx) * k, ay = (ty - ry) * k;
+    vx = (vx + ax) * (1 - d); vy = (vy + ay) * (1 - d);
     rx += vx; ry += vy;
     const el = elRef.current;
-    if (el) {
-      el.style.setProperty("--tiltX", `${rx}deg`);
-      el.style.setProperty("--tiltY", `${ry}deg`);
-    }
+    if (el) { el.style.setProperty("--tiltX", `${rx}deg`); el.style.setProperty("--tiltY", `${ry}deg`); }
     raf = requestAnimationFrame(step);
   };
 
-  const setTarget = (xDeg: number, yDeg: number) => {
-    tx = xDeg; ty = yDeg;
-    if (!raf) raf = requestAnimationFrame(step);
-  };
+  const setTarget = (xDeg: number, yDeg: number) => { tx = xDeg; ty = yDeg; if (!raf) raf = requestAnimationFrame(step); };
   const stop = () => { tx = 0; ty = 0; };
   useEffect(() => () => { if (raf) cancelAnimationFrame(raf); }, []);
   return { elRef, setTarget, stop };
@@ -57,8 +46,8 @@ export default function DeviceTile({
     const y = e.clientY - rect.top;
     const midX = rect.width / 2;
     const midY = rect.height / 2;
-    const rotY = ((x - midX) / midX) * 6;
-    const rotX = -((y - midY) / midY) * 6;
+    const rotY = ((x - midX) / midX) * 5.5;
+    const rotX = -((y - midY) / midY) * 5.5;
     setTarget(rotX, rotY);
     el.style.setProperty("--glowX", `${(x / rect.width) * 100}%`);
     el.style.setProperty("--glowY", `${(y / rect.height) * 100}%`);
@@ -76,20 +65,10 @@ export default function DeviceTile({
       onMouseLeave={onMouseLeave}
     >
       {d.imageUrl && <img src={d.imageUrl} alt={d.label} className="device-image-bg" />}
-
       <div className="device-tile__label">{d.label}</div>
       <div className="device-tile__badge">{d.platform === "PS5" ? "PS5" : d.isVip ? "VIP" : "STD"}</div>
       <div className={`device-dot ${d.status === "active" ? "device-dot--ok" : "device-dot--bad"}`} />
-
-      <button
-        type="button"
-        className="specs-btn"
-        onClick={(e) => { e.stopPropagation(); onSpecsToggle(d.id); }}
-        aria-label="Показать характеристики"
-      >
-        Specs
-      </button>
-
+      <button type="button" className="specs-btn" onClick={(e) => { e.stopPropagation(); onSpecsToggle(d.id); }} aria-label="Показать характеристики">Specs</button>
       {d.busyState === "booked" && <div className="device-lock" title="Забронировано">🔒</div>}
     </button>
   );

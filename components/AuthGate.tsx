@@ -12,11 +12,13 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initEl = document.getElementById("__initData") as HTMLInputElement | null;
     const initData = initEl?.value || "";
+
     if (initData) {
-      setUser({ id: initData }); // инициализируем по маркеру
+      setUser({ id: "telegram" });
       setReady(true);
       return;
     }
+
     const raw = localStorage.getItem("toxicskill_user");
     if (raw) {
       try {
@@ -33,8 +35,6 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     const id = `local-${Date.now()}`;
     const u: User = { id, username: nickname || undefined, email: email || undefined };
     localStorage.setItem("toxicskill_user", JSON.stringify(u));
-    const initEl = document.getElementById("__initData") as HTMLInputElement | null;
-    if (initEl) initEl.value = `local:${id}`; // синхронизируем initData для API
     setUser(u);
   };
 
@@ -44,7 +44,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
       <div className="auth-card">
         <div className="auth-header">
           <div className="auth-title">Вход в toxicskill</div>
-          <div className="auth-subtitle">Создайте локальный профиль, если ушли из Telegram</div>
+          <div className="auth-subtitle">Создайте локальный профиль, если вы не в Telegram</div>
         </div>
         <div className="auth-fields">
           <div className="field">
@@ -66,3 +66,4 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
+
