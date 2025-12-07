@@ -37,7 +37,7 @@ export default function ModernCalendar({
   maxDate.setDate(today.getDate() + maxDaysAhead);
 
   const firstDay = new Date(current.getFullYear(), current.getMonth(), 1);
-  const startWeekday = (firstDay.getDay() + 6) % 7; // делаем понедельник первым
+  const startWeekday = (firstDay.getDay() + 6) % 7; // понедельник первый
   const daysInMonth = new Date(current.getFullYear(), current.getMonth() + 1, 0).getDate();
 
   const isDisabled = (d: Date) => d < new Date(today.toDateString()) || d > maxDate;
@@ -53,27 +53,15 @@ export default function ModernCalendar({
       {(open || inline) && (
         <div className="calendar__panel">
           <div className="calendar__header">
-            <button
-              className="tox-button tox-button--sm"
-              onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() - 1, 1))}
-            >
-              ←
-            </button>
+            <button className="tox-button tox-button--sm" onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() - 1, 1))}>←</button>
             <div className="calendar__title">
               {current.toLocaleString("ru-RU", { month: "long", year: "numeric" })}
             </div>
-            <button
-              className="tox-button tox-button--sm"
-              onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() + 1, 1))}
-            >
-              →
-            </button>
+            <button className="tox-button tox-button--sm" onClick={() => setCurrent(new Date(current.getFullYear(), current.getMonth() + 1, 1))}>→</button>
           </div>
 
           <div className="calendar__week">
-            {["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map((d) => (
-              <div key={d} className="calendar__weekday">{d}</div>
-            ))}
+            {["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map((d) => <div key={d} className="calendar__weekday">{d}</div>)}
           </div>
 
           <div className="calendar__grid">

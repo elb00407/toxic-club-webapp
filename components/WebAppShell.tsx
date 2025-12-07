@@ -15,6 +15,7 @@ export default function WebAppShell({ children }: { children: React.ReactNode })
     <div className="min-h-screen">
       <div className={`tox-brand ${isMobile ? "tox-brand-static" : "tox-brand-animated"}`}>toxicskill</div>
       <div className="container">{children}</div>
+      {/* initData будет вставлен ботом */}
       <input id="__initData" type="hidden" />
     </div>
   );

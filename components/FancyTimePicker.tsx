@@ -23,11 +23,10 @@ export default function FancyTimePicker({
   defaultStartStep?: number;
   defaultDurationH?: number;
 }) {
-  const STEPS = 48; // по 30 минут
+  const STEPS = 48; // каждые 30 минут
   const [startStep, setStartStep] = useState(defaultStartStep);
   const [durationH, setDurationH] = useState(defaultDurationH);
 
-  // map занятости по шагам
   const blocked = useMemo(() => {
     const map = new Array(STEPS).fill(false);
     busyRanges.forEach((r) => {
@@ -40,34 +39,21 @@ export default function FancyTimePicker({
     return map;
   }, [busyRanges]);
 
-  // конечный шаг по длительности
   const durationSteps = Math.max(2, Math.min(Math.round(durationH * 2), maxHours * 2)); // минимум 1 час
   const endStep = Math.min(startStep + durationSteps, STEPS);
 
-  // авто-коррекция при конфликте с занятостью
   useEffect(() => {
-    let ok = true;
+    // если пересекается со занятостью, сдвигаем старт вперёд до ближайшего окна
+    let conflict = false;
     for (let i = startStep; i < endStep; i++) {
-      if (blocked[i]) {
-        ok = false;
-        break;
-      }
+      if (blocked[i]) { conflict = true; break; }
     }
-    if (!ok) {
-      // сдвиг вперёд до ближайшего свободного окна
+    if (conflict) {
       let s = startStep;
       while (s + durationSteps <= STEPS) {
-        let conflict = false;
-        for (let i = s; i < s + durationSteps; i++) {
-          if (blocked[i]) {
-            conflict = true;
-            break;
-          }
-        }
-        if (!conflict) {
-          setStartStep(s);
-          return;
-        }
+        let bad = false;
+        for (let i = s; i < s + durationSteps; i++) if (blocked[i]) { bad = true; break; }
+        if (!bad) { setStartStep(s); return; }
         s++;
       }
     }
@@ -87,52 +73,31 @@ export default function FancyTimePicker({
   return (
     <div className="fancy-time">
       <div className="fancy-time__header">
-        <span className="fancy-time__label">Начало:</span>
+        <span className="fancy-time__label">Начало</span>
         <span className="fancy-time__value">{toHHMM(startStep)}</span>
-        <span className="fancy-time__label">Длительность:</span>
+        <span className="fancy-time__label">Длительность</span>
         <div className="fancy-time__chips">
           {durations.map((h) => (
-            <button
-              key={h}
-              className={`chip ${h === durationH ? "chip--active" : ""}`}
-              onClick={() => setDurationH(h)}
-            >
+            <button key={h} className={`chip ${h === durationH ? "chip--active" : ""}`} onClick={() => setDurationH(h)}>
               {h} ч
             </button>
           ))}
         </div>
-        <span className="fancy-time__label">Конец:</span>
+        <span className="fancy-time__label">Конец</span>
         <span className="fancy-time__value">{toHHMM(endStep)}</span>
       </div>
 
       <div className="fancy-time__track">
-        {/* фон: занятость и шкала */}
         <div className="fancy-time__grid">
           {Array.from({ length: STEPS }).map((_, i) => (
-            <div
-              key={i}
-              className="fancy-time__cell"
-              style={{ background: blocked[i] ? "rgba(255,80,80,0.18)" : "transparent" }}
-            />
+            <div key={i} className="fancy-time__cell" style={{ background: blocked[i] ? "rgba(255,80,80,0.18)" : "transparent" }} />
           ))}
         </div>
 
-        {/* выбранный диапазон */}
-        <div
-          className="fancy-time__range"
-          style={{
-            left: `${(startStep / STEPS) * 100}%`,
-            width: `${((endStep - startStep) / STEPS) * 100}%`,
-          }}
-        />
+        <div className="fancy-time__range" style={{ left: `${(startStep / STEPS) * 100}%`, width: `${((endStep - startStep) / STEPS) * 100}%` }} />
 
-        {/* ручка старта */}
-        <div
-          className="fancy-time__handle"
-          style={{ left: `calc(${(startStep / STEPS) * 100}% - 14px)` }}
-        />
+        <div className="fancy-time__handle" style={{ left: `calc(${(startStep / STEPS) * 100}% - 14px)` }} />
 
-        {/* один range-инпут для старта */}
         <input
           type="range"
           min={0}

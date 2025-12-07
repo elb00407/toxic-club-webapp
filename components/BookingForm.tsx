@@ -25,7 +25,7 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
       fetch(`/api/pcs/availability?pcId=${pcId}&date=${date}`)
         .then((r) => r.json())
         .then((d) => setBusy(d.busy || []))
-        .catch(() => setBusy([]));   // ✅ исправлено: правильное закрытие скобок
+        .catch(() => setBusy([]));
     }
   }, [pcId, date]);
 
@@ -46,7 +46,7 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
     if (e <= s) return setToast({ message: "Конец должен быть позже начала", type: "error" });
     if (!durationOk) return setToast({ message: `Минимум 1 час, максимум ${maxHours} часов`, type: "error" });
 
-    const endpoint = pcId === "vip-auto" || pcId === "std-auto" ? "/api/auto/book" : "/api/bookings/create";
+    const endpoint = pcId.startsWith("pc-") || pcId.startsWith("ps5-") ? "/api/bookings/create" : "/api/auto/book";
     const payload: any = {
       startsAt: s.toISOString(),
       endsAt: e.toISOString(),
@@ -100,9 +100,7 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
         <button className="tox-button" onClick={submit} disabled={!durationOk}>
           Подтвердить бронь
         </button>
-        {!durationOk && (
-          <div className="hint-error">Минимум 1 час, максимум {maxHours} часов</div>
-        )}
+        {!durationOk && <div className="hint-error">Минимум 1 час, максимум {maxHours} часов</div>}
       </div>
 
       {toast && <Toast message={toast.message} type={toast.type} />}
