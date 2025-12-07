@@ -6,22 +6,25 @@ export type DeviceItem = {
   status: "active" | "maintenance";
 };
 
-export const devices: DeviceItem[] = [
-  // ПК стандарт
-  { id: "pc-01", label: "ПК #01", platform: "PC", isVip: false, status: "active" },
-  { id: "pc-02", label: "ПК #02", platform: "PC", isVip: false, status: "active" },
-  { id: "pc-03", label: "ПК #03", platform: "PC", isVip: false, status: "active" },
-  { id: "pc-04", label: "ПК #04", platform: "PC", isVip: false, status: "active" },
+const stdCount = 16;
+const vipCount = 5;
 
-  // ПК VIP
-  { id: "pc-vip-01", label: "ПК VIP #01", platform: "PC", isVip: true, status: "active" },
-  { id: "pc-vip-02", label: "ПК VIP #02", platform: "PC", isVip: true, status: "active" },
+const stdPCs: DeviceItem[] = Array.from({ length: stdCount }).map((_, i) => ({
+  id: `pc-${String(i + 1).padStart(2, "0")}`,
+  label: `ПК #${String(i + 1).padStart(2, "0")}`,
+  platform: "PC",
+  isVip: false,
+  status: "active",
+}));
 
-  // PS5 (ограничение 7 часов — на уровне UI/BookingForm)
-  { id: "ps5-01", label: "PS5 #01", platform: "PS5", status: "active" },
-  { id: "ps5-02", label: "PS5 #02", platform: "PS5", status: "active" },
+const vipPCs: DeviceItem[] = Array.from({ length: vipCount }).map((_, i) => ({
+  id: `pc-vip-${String(i + 1).padStart(2, "0")}`,
+  label: `ПК VIP #${String(i + 1).padStart(2, "0")}`,
+  platform: "PC",
+  isVip: true,
+  status: "active",
+}));
 
-  // Для полноты — авто категории (если нужны)
-  { id: "std-auto", label: "Авто • Стандарт", platform: "PC", isVip: false, status: "active" },
-  { id: "vip-auto", label: "Авто • VIP", platform: "PC", isVip: true, status: "active" },
-];
+const ps5: DeviceItem = { id: "ps5-01", label: "PS5 #01", platform: "PS5", status: "active" };
+
+export const devices: DeviceItem[] = [...stdPCs, ...vipPCs, ps5];

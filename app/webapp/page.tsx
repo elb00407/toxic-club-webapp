@@ -11,12 +11,13 @@ export default function Page() {
   const [picked, setPicked] = useState<Picked | null>(null);
 
   return (
-    <WebAppShell>
+    <WebAppShell onBrandClick={() => setPicked(null)}>
       <main>
         {!picked && (
           <div className="card">
-            <div className="text-sm mb-4" style={{ color: "#9aa0a6" }}>
-              Выберите устройство для брони
+            <div className="grid-header">
+              <div className="grid-title">Выберите устройство</div>
+              <div className="grid-subtitle">16 стандартных ПК • 5 VIP • 1 PS5</div>
             </div>
             <DeviceGrid
               items={devices}
@@ -27,11 +28,17 @@ export default function Page() {
 
         {picked && (
           <>
-            <BookingForm pcId={picked.id} platform={picked.platform} />
+            <div className="card">
+              <div className="grid-header">
+                <div className="grid-title">{picked.label}</div>
+                <div className="grid-subtitle">
+                  {picked.platform === "PS5" ? "PlayStation 5 (макс. 7 ч)" : picked.isVip ? "ПК VIP" : "ПК Стандарт"}
+                </div>
+              </div>
+              <BookingForm pcId={picked.id} platform={picked.platform} />
+            </div>
             <div className="mt-6">
-              <button className="tox-button" onClick={() => setPicked(null)}>
-                Вернуться к выбору
-              </button>
+              <button className="tox-button" onClick={() => setPicked(null)}>Вернуться к выбору</button>
             </div>
           </>
         )}

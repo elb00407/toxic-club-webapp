@@ -71,14 +71,8 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
   };
 
   return (
-    <div className="card mt-6">
-      <div className="form-head">
-        <div className="form-subtitle">
-          Платформа: {platform === "PS5" ? "PlayStation 5 (макс. 7 ч)" : "ПК"} • ID: {pcId}
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
+    <div className="booking">
+      <div className="grid md:grid-cols-2 gap-10">
         <div>
           <div className="label">Дата</div>
           <ModernCalendar value={date} onChange={setDate} />

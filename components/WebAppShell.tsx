@@ -1,7 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export default function WebAppShell({ children }: { children: React.ReactNode }) {
+export default function WebAppShell({
+  children,
+  onBrandClick,
+}: {
+  children: React.ReactNode;
+  onBrandClick?: () => void;
+}) {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
@@ -13,9 +19,14 @@ export default function WebAppShell({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen">
-      <div className={`tox-brand ${isMobile ? "tox-brand-static" : "tox-brand-animated"}`}>toxicskill</div>
+      <button
+        className={`tox-brand ${isMobile ? "tox-brand-static" : "tox-brand-animated"}`}
+        onClick={onBrandClick}
+        aria-label="Вернуться на главную"
+      >
+        toxicskill
+      </button>
       <div className="container">{children}</div>
-      {/* initData будет вставлен ботом */}
       <input id="__initData" type="hidden" />
     </div>
   );

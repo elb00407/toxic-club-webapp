@@ -19,7 +19,7 @@ html, body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto;
 }
 
-.container { max-width: 1000px; margin: 0 auto; padding: 18px; }
+.container { max-width: 1100px; margin: 0 auto; padding: 18px; }
 
 /* Брендинг */
 .tox-brand {
@@ -29,6 +29,8 @@ html, body {
   -webkit-background-clip: text; background-clip: text; color: transparent;
   filter: drop-shadow(0 0 10px rgba(0,255,102,.25));
   font-size: 20px;
+  border: none;
+  cursor: pointer;
 }
 .tox-brand-animated { animation: glowPulse 3.8s ease-in-out infinite; }
 .tox-brand-static { animation: none; }
@@ -37,16 +39,18 @@ html, body {
   50% { filter: drop-shadow(0 0 18px rgba(0,255,102,.45)); }
 }
 
-/* Карточки */
+/* Карточка контейнер */
 .card {
   background: linear-gradient(180deg, #15171a, #101215);
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 18px;
   box-shadow: 0 12px 40px rgba(0,0,0,.45);
-  transition: transform .2s ease, box-shadow .2s ease;
 }
-.card:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(0,255,102,.18); }
+
+.grid-header { margin-bottom: 16px; }
+.grid-title { font-size: 18px; font-weight: 800; }
+.grid-subtitle { color: var(--muted); font-size: 13px; }
 
 /* Кнопки */
 .tox-button {
@@ -62,6 +66,7 @@ html, body {
 .tox-button:disabled { opacity: .5; cursor: not-allowed; }
 .tox-button--sm { padding: 8px 10px; font-size: 12px; }
 
+/* Инпуты */
 .input {
   background: #121317; color: var(--text);
   border: 1px solid var(--border);
@@ -70,36 +75,53 @@ html, body {
 .input:focus { outline: none; border-color: var(--neon-2); box-shadow: 0 0 0 3px rgba(0,255,102,.15); }
 
 .label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
-.form-head { margin-bottom: 6px; }
-.form-subtitle { color: var(--muted); font-size: 13px; }
 .actions { margin-top: 16px; display: flex; gap: 12px; align-items: center; }
 .hint-error { color: var(--danger); font-size: 12px; }
 
-/* Device cards */
-.device-card {
-  text-align: left;
-  background: linear-gradient(180deg, #171a1d, #111316);
-  border: 1px solid var(--border);
-  border-radius: 18px; padding: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.35);
-  transition: transform .15s ease, box-shadow .15s ease;
-  width: 100%;
+/* Сетка устройств: компактные квадраты */
+.devices-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 12px;
 }
-.device-card:hover { transform: translateY(-3px); box-shadow: 0 14px 38px rgba(0,255,102,.18); }
-.device-card:disabled { opacity: .6; cursor: not-allowed; }
-.device-card__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.device-card__subtitle { color: var(--muted); font-size: 12px; }
-.device-card__title { font-size: 18px; font-weight: 700; margin-top: 4px; }
-.device-card__imageWrap { height: 120px; border-radius: 14px; overflow: hidden; margin-bottom: 12px; border: 1px solid #1b1d22; }
-.device-image { width: 100%; height: 100%; }
-.device-image--pc { background: linear-gradient(135deg, #0f1320, #132036); }
-.device-image--vip { background: linear-gradient(135deg, #12161e, #1c2a2a), radial-gradient(120px at 80% 20%, rgba(212,255,0,.45), rgba(0,255,102,.45)); background-blend-mode: screen; }
-.device-image--ps5 { background: linear-gradient(135deg, #1a1f29, #223144), radial-gradient(120px at 10% 90%, rgba(160,180,255,.35), rgba(45,88,255,.35)); background-blend-mode: screen; }
-.device-card__bottom { display: flex; justify-content: space-between; align-items: center; }
-.device-card__hint { color: var(--muted); font-size: 12px; }
-.device-status { width: 10px; height: 10px; border-radius: 999px; }
-.device-status--ok { background: linear-gradient(135deg,#8fff00,#00ff66); box-shadow: 0 0 10px rgba(0,255,102,.35); }
-.device-status--bad { background: #ff5a5a; }
+@media (max-width: 1200px) { .devices-grid { grid-template-columns: repeat(6, 1fr); } }
+@media (max-width: 992px) { .devices-grid { grid-template-columns: repeat(5, 1fr); } }
+@media (max-width: 768px) { .devices-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 480px) { .devices-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* Квадратная плитка устройства */
+.device-tile {
+  position: relative;
+  aspect-ratio: 1 / 1; /* квадрат */
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #121317;
+  box-shadow: 0 8px 22px rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  cursor: pointer;
+}
+.device-tile:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,255,102,.18); border-color: #2a2d34; }
+.device-tile:disabled { opacity: .6; cursor: not-allowed; }
+
+.device-tile__label { font-weight: 800; font-size: 14px; text-align: center; }
+.device-tile__badge {
+  position: absolute; top: 8px; left: 8px;
+  font-size: 10px; font-weight: 700; color: #0a0a0a;
+  border-radius: 999px; padding: 4px 8px;
+  background: linear-gradient(135deg, var(--neon-1), var(--neon-2));
+}
+.device-dot {
+  position: absolute; top: 10px; right: 10px;
+  width: 8px; height: 8px; border-radius: 999px;
+}
+.device-dot--ok { background: linear-gradient(135deg,#8fff00,#00ff66); box-shadow: 0 0 6px rgba(0,255,102,.35); }
+.device-dot--bad { background: #ff5a5a; }
+
+.device-tile--std { background: linear-gradient(180deg, #181a1e, #121317); }
+.device-tile--vip { background: radial-gradient(140px at 80% 20%, rgba(212,255,0,.25), rgba(0,255,102,.25)), linear-gradient(180deg, #181a1e, #121317); background-blend-mode: screen; }
+.device-tile--ps5 { background: radial-gradient(140px at 20% 80%, rgba(160,180,255,.25), rgba(45,88,255,.25)), linear-gradient(180deg, #181a1e, #121317); background-blend-mode: screen; }
 
 /* FancyTimePicker */
 .fancy-time {}
@@ -168,8 +190,8 @@ html, body {
   .container { padding: 14px; }
   .card { border-radius: 16px; padding: 14px; }
   .tox-brand { font-size: 16px; }
+  .devices-grid { gap: 10px; }
   .fancy-time__track { height: 72px; } /* больше площадь для пальца */
-  .device-card__imageWrap { height: 96px; }
   .chip { padding: 8px 12px; } /* крупнее для тач */
 }
 

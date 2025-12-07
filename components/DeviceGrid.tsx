@@ -16,33 +16,20 @@ export default function DeviceGrid({
   onPick: (item: DeviceItem) => void;
 }) {
   return (
-    <div className="grid gap-12 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1">
+    <div className="devices-grid">
       {items.map((d) => (
         <button
           key={d.id}
-          className="device-card"
+          className={`device-tile ${d.platform === "PS5" ? "device-tile--ps5" : d.isVip ? "device-tile--vip" : "device-tile--std"}`}
           onClick={() => onPick(d)}
           disabled={d.status !== "active"}
           aria-label={`Выбрать: ${d.label}`}
         >
-          <div className="device-card__top">
-            <div>
-              <div className="device-card__subtitle">
-                {d.platform === "PC" ? (d.isVip ? "ПК • VIP" : "ПК • Стандарт") : "PlayStation 5"}
-              </div>
-              <div className="device-card__title">{d.label}</div>
-            </div>
-            <div className={`device-status ${d.status === "active" ? "device-status--ok" : "device-status--bad"}`} />
+          <div className="device-tile__label">{d.label}</div>
+          <div className="device-tile__badge">
+            {d.platform === "PS5" ? "PS5" : d.isVip ? "VIP" : "STD"}
           </div>
-
-          <div className="device-card__imageWrap">
-            <div className={`device-image ${d.platform === "PS5" ? "device-image--ps5" : d.isVip ? "device-image--vip" : "device-image--pc"}`} />
-          </div>
-
-          <div className="device-card__bottom">
-            <span className="tox-button tox-button--sm">Выбрать</span>
-            {d.platform === "PS5" && <span className="device-card__hint">Макс. 7 часов</span>}
-          </div>
+          <div className={`device-dot ${d.status === "active" ? "device-dot--ok" : "device-dot--bad"}`} />
         </button>
       ))}
     </div>
