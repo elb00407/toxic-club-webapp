@@ -73,18 +73,29 @@ html, body {
 .tox-button:disabled { opacity: .5; cursor: not-allowed; }
 .tox-button--sm { padding: 8px 10px; font-size: 12px; }
 
-/* Сетка устройств: квадраты */
-.devices-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 12px;
+.input {
+  background: #121317; color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 10px 12px;
 }
+.input:focus { outline: none; border-color: var(--neon-2); box-shadow: 0 0 0 3px rgba(0,255,102,.15); }
+
+.label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.actions { margin-top: 16px; display: flex; gap: 12px; align-items: center; }
+.hint-error { color: var(--danger); font-size: 12px; }
+
+/* Обёртка сетки — полноэкранный эффект на ПК */
+.devices-grid-wrapper { position: relative; min-height: 60vh; }
+@media (min-width: 992px) { .devices-grid-wrapper { min-height: 72vh; } }
+
+/* Сетка устройств: квадраты */
+.devices-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
 @media (max-width: 1200px) { .devices-grid { grid-template-columns: repeat(6, 1fr); } }
 @media (max-width: 992px) { .devices-grid { grid-template-columns: repeat(5, 1fr); } }
 @media (max-width: 768px) { .devices-grid { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 480px) { .devices-grid { grid-template-columns: repeat(3, 1fr); } }
 
-/* Квадратная плитка устройства — 2D/3D + инерция */
+/* Квадратная плитка устройства — 3D инерция */
 .device-tile {
   position: relative; aspect-ratio: 1 / 1;
   border-radius: 14px; border: 1px solid var(--border);
@@ -116,42 +127,57 @@ html, body {
 .device-dot--ok { background: linear-gradient(135deg,#8fff00,#00ff66); box-shadow: 0 0 6px rgba(0,255,102,.35); }
 .device-dot--bad { background: #ff5a5a; }
 
-/* specs — плавное раскрытие */
-.device-specs {
-  position: absolute; bottom: 8px; left: 8px; right: 8px;
-  display: flex; justify-content: space-between; gap: 6px; transform: translateY(10px); opacity: 0;
-  transition: transform .12s ease, opacity .12s ease;
+/* Прозрачная кнопка Specs */
+.specs-btn {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 11px; font-weight: 800; letter-spacing: .04em;
+  color: var(--text);
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--border);
+  border-radius: 999px; padding: 6px 10px;
+  transform: translateZ(20px);
+  backdrop-filter: blur(4px);
+  transition: background .12s ease, border-color .12s ease;
 }
-.device-tile:hover .device-specs { transform: translateY(0); opacity: 1; }
-.device-spec { font-size: 11px; color: var(--muted); background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; }
-.device-spec span { color: #b5b9bf; font-weight: 700; margin-right: 6px; }
+.specs-btn:hover { background: rgba(255,255,255,.1); border-color: #2a2d34; }
 
-/* peripherals — появятся, как добавишь */
-.device-peripherals {
-  position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; flex-wrap: wrap;
+/* specs-панель справа */
+.specs-panel {
+  position: absolute; top: 0; right: 0; width: 0; opacity: 0;
+  transition: width .2s ease, opacity .2s ease;
+  overflow: hidden;
 }
-.device-gear { font-size: 10px; color: var(--muted); background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 999px; padding: 4px 8px; }
-.device-gear span { color: #b5b9bf; font-weight: 700; margin-right: 4px; }
+.specs-panel--open { width: min(360px, 90vw); opacity: 1; }
 
-/* State overlays */
+.specs-content {
+  height: 100%;
+  background: #14161a; border-left: 1px solid var(--border);
+  box-shadow: -10px 0 30px rgba(0,0,0,.35);
+  padding: 16px;
+}
+.specs-title { font-weight: 800; margin-bottom: 8px; }
+.mt-3 { margin-top: 12px; }
+.specs-row {
+  display: grid; grid-template-columns: 120px 1fr; align-items: center;
+  background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 10px;
+  padding: 8px 10px; margin-bottom: 8px; gap: 8px;
+}
+.specs-row span { color: #b5b9bf; font-weight: 700; }
+
+/* Состояния занятости */
 .device-tile--busy::before {
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(255,120,120,.12), transparent);
   pointer-events: none;
 }
-.device-tile--booked {
-  filter: grayscale(.3) saturate(.9) brightness(.9);
-}
+.device-tile--booked { filter: grayscale(.3) saturate(.9) brightness(.9); }
 .device-tile--booked::before {
   content: ""; position: absolute; inset: 0;
   background: rgba(255,80,80,.18);
   backdrop-filter: blur(2px);
   pointer-events: none;
 }
-.device-lock {
-  position: absolute; bottom: 8px; right: 8px; font-size: 14px;
-  transform: translateZ(20px);
-}
+.device-lock { position: absolute; bottom: 8px; right: 8px; font-size: 14px; transform: translateZ(20px); }
 
 /* Тематические фоны */
 .device-tile--std { background: linear-gradient(180deg, #181a1e, #121317); }
@@ -178,8 +204,7 @@ html, body {
   .tox-brand { font-size: 16px; }
   .devices-grid { gap: 10px; }
   .device-tile { border-radius: 12px; }
-  .device-specs { display: none; } /* упрощаем hover на мобильных */
+  .specs-panel--open { width: 100%; } /* На мобиле панель на всю ширину */
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes glowPulse { 0%,100% { filter: drop-shadow(0 0 6px rgba(0,255,102,.2)); } 50% { filter: drop-shadow(0 0 18px rgba(0,255,102,.45)); } }

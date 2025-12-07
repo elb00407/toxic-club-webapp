@@ -43,7 +43,6 @@ export default function FancyTimePicker({
   const endStep = Math.min(startStep + durationSteps, STEPS);
 
   useEffect(() => {
-    // если пересекается со занятостью, сдвигаем старт вперёд до ближайшего окна
     let conflict = false;
     for (let i = startStep; i < endStep; i++) {
       if (blocked[i]) { conflict = true; break; }

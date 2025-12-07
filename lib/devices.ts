@@ -20,7 +20,6 @@ const stdPCs: DeviceItem[] = Array.from({ length: stdCount }).map((_, i) => ({
   status: "active",
   specs: { cpu: "Ryzen 5 5600", gpu: i % 2 ? "RTX 4060" : "RTX 3060 Ti" },
   busyState: (i % 7 === 0) ? "busy" : "free",
-  peripherals: undefined, // сюда потом добавишь своё железо
 }));
 
 const vipPCs: DeviceItem[] = Array.from({ length: vipCount }).map((_, i) => ({
@@ -31,7 +30,6 @@ const vipPCs: DeviceItem[] = Array.from({ length: vipCount }).map((_, i) => ({
   status: "active",
   specs: { cpu: "Intel i5-13400F", gpu: "RTX 4060 Ti" },
   busyState: (i % 3 === 0) ? "booked" : "free",
-  peripherals: undefined,
 }));
 
 const ps5: DeviceItem = {
@@ -41,7 +39,6 @@ const ps5: DeviceItem = {
   status: "active",
   specs: { cpu: "Zen 2 (8C)", gpu: "RDNA 2" },
   busyState: "free",
-  peripherals: undefined,
 };
 
 export const devices: DeviceItem[] = [...stdPCs, ...vipPCs, ps5];

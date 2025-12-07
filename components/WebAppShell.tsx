@@ -27,6 +27,7 @@ export default function WebAppShell({
         toxicskill
       </button>
       <div className="container">{children}</div>
+      {/* Telegram вставит initData */}
       <input id="__initData" type="hidden" />
     </div>
   );
