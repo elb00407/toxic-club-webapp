@@ -1,37 +1,41 @@
 "use client";
-import Header from "@/components/Header";
 import WebAppShell from "@/components/WebAppShell";
-import CategoryPicker from "@/components/CategoryPicker";
+import PcCards from "@/components/PcCards";
 import BookingForm from "@/components/BookingForm";
 import { useState } from "react";
 
+type Picked = { pcId: string; platform: "PC" | "PS5" };
+
 export default function Page() {
-  const [pickedVip, setPickedVip] = useState<boolean | null>(null);
+  const [picked, setPicked] = useState<Picked | null>(null);
+
+  const items = [
+    { id: "std-auto", label: "Автоназначение • Стандарт", isVip: false, platform: "PC", status: "active" },
+    { id: "vip-auto", label: "Автоназначение • VIP", isVip: true, platform: "PC", status: "active" },
+    { id: "ps5-auto", label: "PlayStation 5", platform: "PS5", status: "active" },
+  ];
 
   return (
     <WebAppShell>
-      <Header subtitle="Бронирование ПК" />
-      <main className="px-4 py-3">
-        {pickedVip === null && (
-          <>
+      <main>
+        {!picked && (
+          <div className="card">
             <div className="text-sm mb-4" style={{ color: "#9aa0a6" }}>
-              Выберите категорию для автоназначения ПК
+              Выберите категорию или PS5
             </div>
-            <CategoryPicker onPick={(v) => setPickedVip(v)} />
-          </>
+            <PcCards
+              items={items}
+              onPick={(i) => setPicked({ pcId: i.id, platform: i.platform as "PC" | "PS5" })}
+            />
+          </div>
         )}
 
-        {pickedVip !== null && (
+        {picked && (
           <>
-            <div className="card mt-6">
-              <div className="text-sm mb-2" style={{ color: "#9aa0a6" }}>
-                Категория выбрана: {pickedVip ? "VIP" : "Стандарт"}
-              </div>
-              <BookingForm pcId={pickedVip ? "vip-auto" : "std-auto"} />
-            </div>
+            <BookingForm pcId={picked.pcId} platform={picked.platform} />
             <div className="mt-6">
-              <button className="tox-button" onClick={() => setPickedVip(null)}>
-                Вернуться к выбору категории
+              <button className="tox-button" onClick={() => setPicked(null)}>
+                Вернуться к выбору
               </button>
             </div>
           </>

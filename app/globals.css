@@ -1,44 +1,71 @@
 :root {
-  --bg-0: #0b0b0c;
-  --bg-1: #111113;
+  --bg-0: #0a0b0d;
+  --bg-1: #101215;
   --text: #e7e7e7;
   --muted: #9aa0a6;
-  --accent-1: #d4ff00;
-  --accent-2: #00ff66;
+  --neon-1: #d4ff00;
+  --neon-2: #00ff66;
+  --danger: #ff5a5a;
+  --card: #15171a;
+  --border: #202228;
 }
 
 html, body {
   height: 100%;
-  background: linear-gradient(180deg, var(--bg-0), var(--bg-1));
+  background: radial-gradient(1000px at 10% -10%, #0f1114 0%, var(--bg-1) 60%), linear-gradient(180deg, var(--bg-0), var(--bg-1));
   color: var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto;
+}
+
+.container { max-width: 920px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
 }
 
 .tox-button {
-  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  background: linear-gradient(135deg, var(--neon-1), var(--neon-2));
   color: #0a0a0a;
-  border-radius: 12px;
-  padding: 10px 14px;
+  border-radius: 14px;
+  padding: 12px 16px;
   font-weight: 700;
   letter-spacing: .02em;
-  transition: transform .12s ease, box-shadow .12s ease;
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
 }
-.tox-button:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,255,102,.12); }
+.tox-button:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,255,102,.18); filter: brightness(1.02); }
+.tox-button:disabled { opacity: .5; cursor: not-allowed; }
 
-.tox-watermark {
-  position: fixed;
-  right: 2rem;
-  bottom: 2rem;
-  opacity: .06;
-  font-weight: 800;
-  letter-spacing: .22em;
-  user-select: none;
-  pointer-events: none;
+.tox-brand {
+  position: fixed; top: 20px; left: 22px; z-index: 50;
+  font-weight: 800; letter-spacing: .12em; text-transform: lowercase;
+  background: linear-gradient(90deg, var(--neon-1), var(--neon-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 10px rgba(0,255,102,.25));
+}
+.tox-brand-animated { animation: glowPulse 3.6s ease-in-out infinite; }
+.tox-brand-static { animation: none; }
+@keyframes glowPulse {
+  0%,100% { filter: drop-shadow(0 0 6px rgba(0,255,102,.2)); }
+  50% { filter: drop-shadow(0 0 16px rgba(0,255,102,.35)); }
 }
 
-.card {
-  background: #161617;
-  border: 1px solid #1e1e20;
-  border-radius: 14px;
-  padding: 12px;
+/* Инпуты */
+.input {
+  background: #121317;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.input:focus { outline: none; border-color: var(--neon-2); box-shadow: 0 0 0 3px rgba(0,255,102,.15); }
+
+/* Мобильный адаптив */
+@media (max-width: 768px) {
+  .container { padding: 12px; }
+  .card { border-radius: 14px; padding: 14px; }
+  .tox-brand { font-size: 16px; }
 }
