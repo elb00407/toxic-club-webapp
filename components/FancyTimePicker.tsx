@@ -70,7 +70,7 @@ export default function FancyTimePicker({
   const durations = [1, 2, 3, 4, 5, 6, 7, 8].filter((h) => h <= maxHours);
 
   return (
-    <div className="fancy-time fancy-time--v2">
+    <div className="fancy-time fancy-time--v3">
       <div className="fancy-time__header">
         <div className="ft-group">
           <div className="fancy-time__label">Начало</div>
@@ -92,7 +92,7 @@ export default function FancyTimePicker({
         </div>
       </div>
 
-      <div className="fancy-time__track fancy-time__track--v2">
+      <div className="fancy-time__track fancy-time__track--v3">
         <div className="fancy-time__grid">
           {Array.from({ length: STEPS }).map((_, i) => (
             <div key={i} className={`fancy-time__cell ${blocked[i] ? "fancy-time__cell--busy" : ""}`} />
