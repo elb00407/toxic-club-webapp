@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import TimeRangeSlider from "./TimeRangeSlider";
+import FancyTimePicker from "./FancyTimePicker";
+import ModernCalendar from "./ModernCalendar";
 import Toast from "./Toast";
-import DatePicker from "./DatePicker";
 
 declare global { interface Window { Telegram?: any; } }
 
@@ -25,7 +25,7 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
       fetch(`/api/pcs/availability?pcId=${pcId}&date=${date}`)
         .then((r) => r.json())
         .then((d) => setBusy(d.busy || []))
-        .catch(() => setBusy([]));
+        .catch(() => setBusy([]);
     }
   }, [pcId, date]);
 
@@ -41,23 +41,25 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
 
   const submit = async () => {
     if (!date || !start || !end) return setToast({ message: "Выберите дату и время", type: "error" });
-
     const s = new Date(`${date}T${start}:00.000Z`);
     const e = new Date(`${date}T${end}:00.000Z`);
     if (e <= s) return setToast({ message: "Конец должен быть позже начала", type: "error" });
     if (!durationOk) return setToast({ message: `Минимум 1 час, максимум ${maxHours} часов`, type: "error" });
 
     const endpoint = pcId === "vip-auto" || pcId === "std-auto" ? "/api/auto/book" : "/api/bookings/create";
+    const payload: any = {
+      startsAt: s.toISOString(),
+      endsAt: e.toISOString(),
+      initData,
+    };
+    if (pcId === "vip-auto") payload.isVip = true;
+    if (pcId === "std-auto") payload.isVip = false;
+    if (pcId.startsWith("pc-") || pcId.startsWith("ps5-")) payload.pcId = pcId;
+
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        isVip: pcId === "vip-auto" ? true : pcId === "std-auto" ? false : undefined,
-        pcId: pcId.startsWith("pc-") || pcId.startsWith("ps5-") ? pcId : undefined,
-        startsAt: s.toISOString(),
-        endsAt: e.toISOString(),
-        initData,
-      }),
+      body: JSON.stringify(payload),
     }).then((r) => r.json());
 
     if (res.ok) {
@@ -70,33 +72,36 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
 
   return (
     <div className="card mt-6">
-      <div className="text-sm mb-4" style={{ color: "#9aa0a6" }}>
-        Платформа: {platform === "PS5" ? "PlayStation 5 (макс. 7 ч)" : "ПК"} • ID: {pcId}
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <div className="text-xs mb-2" style={{ color: "#9aa0a6" }}>
-            Выберите дату:
-          </div>
-          <DatePicker value={date} onChange={setDate} />
-        </div>
-        <div>
-          <div className="text-xs mb-2" style={{ color: "#9aa0a6" }}>
-            Выберите время:
-          </div>
-          <TimeRangeSlider onChange={(s, e) => { setStart(s); setEnd(e); }} busyRanges={busy} maxHours={maxHours} />
+      <div className="form-head">
+        <div className="form-subtitle">
+          Платформа: {platform === "PS5" ? "PlayStation 5 (макс. 7 ч)" : "ПК"} • ID: {pcId}
         </div>
       </div>
 
-      <div className="mt-6 flex gap-10">
+      <div className="grid md:grid-cols-2 gap-6">
+        <div>
+          <div className="label">Дата</div>
+          <ModernCalendar value={date} onChange={setDate} />
+        </div>
+        <div>
+          <div className="label">Время</div>
+          <FancyTimePicker
+            busyRanges={busy}
+            maxHours={maxHours}
+            onChange={(s, e) => {
+              setStart(s);
+              setEnd(e);
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="actions">
         <button className="tox-button" onClick={submit} disabled={!durationOk}>
           Подтвердить бронь
         </button>
         {!durationOk && (
-          <div className="text-xs" style={{ color: "var(--danger)", alignSelf: "center" }}>
-            Минимум 1 час, максимум {maxHours} часов
-          </div>
+          <div className="hint-error">Минимум 1 час, максимум {maxHours} часов</div>
         )}
       </div>
 

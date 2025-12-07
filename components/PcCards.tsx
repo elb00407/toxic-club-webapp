@@ -14,37 +14,23 @@ export default function PcCards({ items, onPick }: { items: PcItem[]; onPick: (i
       {items.map((i) => (
         <button
           key={i.id}
-          className="card text-left hover:translate-y-[-2px] transition-all duration-150"
+          className="pc-card"
           onClick={() => onPick(i)}
           disabled={i.status !== "active"}
-          style={{ opacity: i.status !== "active" ? 0.6 : 1 }}
+          aria-label={`Выбрать: ${i.label}`}
         >
-          <div className="flex items-center justify-between mb-8">
+          <div className="pc-card__top">
             <div>
-              <div style={{ color: "#9aa0a6" }} className="text-xs">
+              <div className="pc-card__subtitle">
                 {i.platform === "PC" ? (i.isVip ? "ПК • VIP" : "ПК • Стандарт") : "PlayStation 5"}
               </div>
-              <div className="text-lg font-semibold mt-1">{i.label}</div>
+              <div className="pc-card__title">{i.label}</div>
             </div>
-            <div
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 999,
-                background: i.status === "active" ? "linear-gradient(135deg,#8fff00,#00ff66)" : "#ff5a5a",
-                boxShadow: i.status === "active" ? "0 0 10px rgba(0,255,102,.35)" : "none",
-              }}
-            />
+            <div className={`pc-status ${i.status === "active" ? "pc-status--ok" : "pc-status--bad"}`} />
           </div>
-          <div className="flex justify-between">
-            <span className="tox-button" style={{ fontSize: 12, padding: "8px 10px" }}>
-              Выбрать
-            </span>
-            {i.platform === "PS5" && (
-              <span className="text-xs" style={{ color: "#9aa0a6" }}>
-                Макс. 7 часов
-              </span>
-            )}
+          <div className="pc-card__bottom">
+            <span className="tox-button tox-button--sm">Выбрать</span>
+            {i.platform === "PS5" && <span className="pc-card__hint">Макс. 7 часов</span>}
           </div>
         </button>
       ))}
