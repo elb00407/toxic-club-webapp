@@ -2,25 +2,48 @@
 import WebAppShell from "@/components/WebAppShell";
 import DeviceGrid from "@/components/DeviceGrid";
 import BookingForm from "@/components/BookingForm";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { devices } from "@/lib/devices";
 
 type Picked = { id: string; platform: "PC" | "PS5"; label: string; isVip?: boolean };
+type Tab = "STANDARD" | "VIP" | "CONSOLE";
 
 export default function Page() {
   const [picked, setPicked] = useState<Picked | null>(null);
+  const [tab, setTab] = useState<Tab>("STANDARD");
+
+  const filtered = useMemo(() => {
+    if (tab === "STANDARD") return devices.filter((d) => d.platform === "PC" && !d.isVip);
+    if (tab === "VIP") return devices.filter((d) => d.platform === "PC" && d.isVip);
+    return devices.filter((d) => d.platform === "PS5");
+  }, [tab]);
 
   return (
-    <WebAppShell onBrandClick={() => setPicked(null)}>
+    <WebAppShell onBrandClick={() => { setPicked(null); setTab("STANDARD"); }}>
       <main>
         {!picked && (
           <div className="card">
-            <div className="grid-header">
-              <div className="grid-title">Выберите устройство</div>
-              <div className="grid-subtitle">16 стандартных ПК • 5 VIP • 1 PS5</div>
+            <div className="tabs">
+              <button className={`tab ${tab === "STANDARD" ? "tab--active" : ""}`} onClick={() => setTab("STANDARD")}>Standard</button>
+              <button className={`tab ${tab === "VIP" ? "tab--active" : ""}`} onClick={() => setTab("VIP")}>VIP</button>
+              <button className={`tab ${tab === "CONSOLE" ? "tab--active" : ""}`} onClick={() => setTab("CONSOLE")}>Console</button>
             </div>
+
+            <div className="grid-header">
+              <div className="grid-title">
+                {tab === "STANDARD" && "Стандартные ПК"}
+                {tab === "VIP" && "VIP ПК"}
+                {tab === "CONSOLE" && "Консоль"}
+              </div>
+              <div className="grid-subtitle">
+                {tab === "STANDARD" && "16 шт • Ryzen 5 5600 • RTX 3060 Ti / 4060"}
+                {tab === "VIP" && "5 шт • Intel i5-13400F • RTX 4060 Ti"}
+                {tab === "CONSOLE" && "PS5 • DualSense • 4K HDR"}
+              </div>
+            </div>
+
             <DeviceGrid
-              items={devices}
+              items={filtered}
               onPick={(d) => setPicked({ id: d.id, platform: d.platform, label: d.label, isVip: d.isVip })}
             />
           </div>
