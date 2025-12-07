@@ -62,7 +62,7 @@ export default function Page() {
                 </div>
                 <BookingForm pcId={picked.id} platform={picked.platform} />
               </div>
-              <div className="mt-6">
+              <div className="actions">
                 <button className="tox-button" onClick={() => setPicked(null)}>Вернуться к выбору</button>
               </div>
             </>

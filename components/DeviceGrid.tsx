@@ -45,7 +45,7 @@ export default function DeviceGrid({
                 <div className="specs-row"><span>Монитор</span><div>{currentPeripherals.monitor || "—"}</div></div>
               </>
             )}
-            <div className="specs-actions">
+            <div className="actions">
               <button className="tox-button tox-button--sm" onClick={() => setOpenSpecsId(null)}>Закрыть</button>
             </div>
           </div>

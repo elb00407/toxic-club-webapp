@@ -44,18 +44,16 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
           <div className="auth-title">Вход в toxicskill</div>
           <div className="auth-subtitle">Создайте локальный профиль, если ушли из Telegram</div>
         </div>
-
         <div className="auth-fields">
           <div className="field">
             <label className="field-label">Никнейм</label>
-            <input className="field-input" placeholder="Например: tox-user" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+            <input className="input" placeholder="Например: tox-user" value={nickname} onChange={(e) => setNickname(e.target.value)} />
           </div>
           <div className="field">
             <label className="field-label">Email (необязательно)</label>
-            <input className="field-input" type="email" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input className="input" type="email" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
         </div>
-
         <div className="auth-actions">
           <button className="tox-button" onClick={register}>Войти</button>
           <div className="auth-hint">Данные хранятся локально на вашем устройстве.</div>

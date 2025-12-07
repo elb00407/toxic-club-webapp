@@ -67,7 +67,6 @@ export default function BookingForm({ pcId, platform = "PC" }: { pcId: string; p
       localId: initData ? undefined : localId || `guest-${Date.now()}`,
     };
 
-    // минимальная валидация перед отправкой
     if (!payload.pcId || !payload.startsAt || !payload.endsAt || (!payload.initData && !payload.localId)) {
       return setToast({ message: "Поля обязательны: pcId, startsAt, endsAt, initData/localId", type: "error" });
     }

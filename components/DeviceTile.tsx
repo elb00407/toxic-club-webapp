@@ -76,7 +76,6 @@ export default function DeviceTile({
       onMouseLeave={onMouseLeave}
     >
       {d.imageUrl && <img src={d.imageUrl} alt={d.label} className="device-image-bg" />}
-
       <div className="device-tile__label">{d.label}</div>
       <div className="device-tile__badge">{d.platform === "PS5" ? "PS5" : d.isVip ? "VIP" : "STD"}</div>
       <div className={`device-dot ${d.status === "active" ? "device-dot--ok" : "device-dot--bad"}`} />
