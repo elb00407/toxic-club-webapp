@@ -20,12 +20,12 @@ export default function WebAppShell({
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // Инициализация initData из Telegram (если доступно)
+  // initData из Telegram, если есть
   useEffect(() => {
     const el = document.getElementById("__initData") as HTMLInputElement | null;
     if (!el) return;
     const tgInit = window.Telegram?.WebApp?.initData || "";
-    el.value = tgInit || ""; // пустое, если не в Telegram
+    el.value = tgInit || "";
   }, []);
 
   return (

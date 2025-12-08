@@ -23,7 +23,7 @@ export default function ProTimeSlider({
   defaultDurationH?: number;
   onChange: (startHHMM: string, endHHMM: string) => void;
 }) {
-  const STEPS = 48;
+  const STEPS = 48; // 30-минутные шаги
   const HOURS = 24;
 
   const [startStep, setStartStep] = useState(defaultStartStep);
@@ -48,46 +48,42 @@ export default function ProTimeSlider({
   }, [startStep, endStep, onChange]);
 
   const trackRef = useRef<HTMLDivElement | null>(null);
-  const dragRef = useRef<{ type: "start" | null; offset: number } | null>(null);
+  const dragging = useRef<boolean>(false);
 
   const clampStart = (val: number) => Math.max(0, Math.min(STEPS - durationSteps, val));
 
+  const getStepFromX = (x: number, rectWidth: number) =>
+    clampStart(Math.floor((x / rectWidth) * (STEPS - durationSteps)));
+
   const onPointerDown = (e: React.PointerEvent) => {
     if (!trackRef.current) return;
+    dragging.current = true;
     const rect = trackRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const left = (startStep / STEPS) * rect.width;
-    const right = (endStep / STEPS) * rect.width;
-    const isStartHandle = Math.abs(x - left) < Math.abs(x - right);
-    dragRef.current = { type: isStartHandle ? "start" : null, offset: x - left };
+    setStartStep(getStepFromX(x, rect.width));
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
-    if (!trackRef.current || !dragRef.current) return;
+    if (!trackRef.current || !dragging.current) return;
     const rect = trackRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    if (dragRef.current.type === "start") {
-      const raw = Math.floor(((x - dragRef.current.offset) / rect.width) * STEPS);
-      setStartStep(clampStart(raw));
-    }
+    setStartStep(getStepFromX(x, rect.width));
   };
 
   const onPointerUp = (e: React.PointerEvent) => {
-    dragRef.current = null;
+    dragging.current = false;
     (e.target as HTMLElement).releasePointerCapture(e.pointerId);
   };
 
   const onTrackClick = (e: React.MouseEvent) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
-    const step = Math.floor(((e.clientX - rect.left) / rect.width) * (STEPS - durationSteps));
-    setStartStep(clampStart(step));
+    const step = getStepFromX(e.clientX - rect.left, rect.width);
+    setStartStep(step);
   };
 
   const hoursLabels = Array.from({ length: HOURS }).map((_, h) => `${String(h).padStart(2, "0")}:00`);
-
-  // Псевдо‑отрисовка занятого (целым блоком) — для демо;
   const busyStart = blocked.findIndex(Boolean);
   const busyWidth = blocked.reduce((acc, b) => acc + (b ? 1 : 0), 0);
 
@@ -95,24 +91,37 @@ export default function ProTimeSlider({
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr", gap: 12, alignItems: "center", marginBottom: 12 }}>
         <div>
-          <div className="fancy-time__label">Начало</div>
-          <div className="fancy-time__value">{hhmm(startStep)}</div>
+          <div className="label">Начало</div>
+          <div style={{ fontSize: 18, fontWeight: 900 }}>{hhmm(startStep)}</div>
         </div>
         <div>
-          <div className="fancy-time__label">Длительность</div>
+          <div className="label">Длительность</div>
           <div className="chips">
             {[1,2,3,4,5,6,7,8].filter(h => h <= maxHours).map(h => (
-              <button key={h} className={`chip ${h === durationH ? "chip--active" : ""}`} onClick={() => setDurationH(h)}>{h} ч</button>
+              <button
+                key={h}
+                className={`tab ${h === durationH ? "tab--active" : ""}`}
+                onClick={() => setDurationH(h)}
+              >
+                {h} ч
+              </button>
             ))}
           </div>
         </div>
         <div>
-          <div className="fancy-time__label">Конец</div>
-          <div className="fancy-time__value">{hhmm(endStep)}</div>
+          <div className="label">Конец</div>
+          <div style={{ fontSize: 18, fontWeight: 900 }}>{hhmm(endStep)}</div>
         </div>
       </div>
 
-      <div className="slider" ref={trackRef} onClick={onTrackClick} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp}>
+      <div
+        className="slider"
+        ref={trackRef}
+        onClick={onTrackClick}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+      >
         <div className="slider__grid">
           {hoursLabels.map((lbl, i) => (
             <div key={i} className="slider__hour" data-label={lbl}></div>
@@ -124,7 +133,7 @@ export default function ProTimeSlider({
             className="slider__busy"
             style={{
               left: `${(busyStart / STEPS) * 100}%`,
-              width: `${(busyWidth / STEPS) * 100}%`
+              width: `${(busyWidth / STEPS) * 100}%`,
             }}
           />
         )}
