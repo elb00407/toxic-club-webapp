@@ -276,3 +276,36 @@ html, body {
 .mobile-nav__btn.active {
   color: var(--neon-2);
 }
+/* Фикс логотипа */
+.tox-brand {
+  position: fixed;
+  top: 12px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  font-size: 22px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .container { padding: 12px; }
+  .card { border-radius: 14px; padding: 12px; }
+  .tox-button { width: 100%; font-size: 15px; padding: 14px; }
+  .tabs { flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .devices-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .grid-title { font-size: 18px; text-align: center; }
+  .grid-subtitle { font-size: 12px; text-align: center; }
+  .slider { width: 100%; margin-top: 12px; }
+  .calendar__panel { width: 100%; }
+}
+
+/* Bottom nav фиксируем */
+.mobile-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #101215;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  z-index: 1000;
+}

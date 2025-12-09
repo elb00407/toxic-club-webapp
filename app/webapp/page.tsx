@@ -13,6 +13,7 @@ type Tab = "STANDARD" | "VIP" | "CONSOLE";
 export default function Page() {
   const [picked, setPicked] = useState<Picked | null>(null);
   const [tab, setTab] = useState<Tab>("STANDARD");
+  const [screen, setScreen] = useState<"home" | "book" | "profile">("home");
 
   const filtered = useMemo(() => {
     if (tab === "STANDARD") return devices.filter((d) => d.platform === "PC" && !d.isVip);
@@ -20,77 +21,49 @@ export default function Page() {
     return devices.filter((d) => d.platform === "PS5");
   }, [tab]);
 
-  // обработчик для MobileNav
-  const handleNavigate = (navTab: string) => {
-    if (navTab === "home") {
-      setPicked(null);
-      setTab("STANDARD");
-    }
-    if (navTab === "book") {
-      // если выбран ПК/PS5, остаёмся в форме
-      if (!picked) {
-        // если ничего не выбрано, открываем стандартные ПК
-        setTab("STANDARD");
-      }
-    }
-    if (navTab === "profile") {
-      // здесь можно показать профиль пользователя
-      alert("Профиль пока в разработке");
-    }
-  };
-
   return (
-    <WebAppShell onBrandClick={() => { setPicked(null); setTab("STANDARD"); }}>
+    <WebAppShell onBrandClick={() => { setPicked(null); setTab("STANDARD"); setScreen("home"); }}>
       <AuthGate>
         <main>
-          {!picked && (
+          {screen === "home" && !picked && (
             <div className="card">
               <div className="tabs">
                 <button className={`tab ${tab === "STANDARD" ? "tab--active" : ""}`} onClick={() => setTab("STANDARD")}>Standard</button>
                 <button className={`tab ${tab === "VIP" ? "tab--active" : ""}`} onClick={() => setTab("VIP")}>VIP</button>
                 <button className={`tab ${tab === "CONSOLE" ? "tab--active" : ""}`} onClick={() => setTab("CONSOLE")}>Console</button>
               </div>
-
-              <div className="grid-header">
-                <div className="grid-title">
-                  {tab === "STANDARD" && "Стандартные ПК"}
-                  {tab === "VIP" && "VIP ПК"}
-                  {tab === "CONSOLE" && "Консоль"}
-                </div>
-                <div className="grid-subtitle">
-                  {tab === "STANDARD" && "16 шт • Ryzen 5 5600 • RTX 3060 Ti / 4060"}
-                  {tab === "VIP" && "5 шт • Intel i5-13400F • RTX 4060 Ti"}
-                  {tab === "CONSOLE" && "PS5 • DualSense • 4K HDR"}
-                </div>
-              </div>
-
-              <DeviceGrid
-                items={filtered}
-                onPick={(d) => setPicked({ id: d.id, platform: d.platform, label: d.label, isVip: d.isVip })}
-              />
+              <DeviceGrid items={filtered} onPick={(d) => setPicked({ id: d.id, platform: d.platform, label: d.label, isVip: d.isVip })} />
             </div>
           )}
 
-          {picked && (
-            <>
-              <div className="card">
-                <div className="grid-header">
-                  <div className="grid-title">{picked.label}</div>
-                  <div className="grid-subtitle">
-                    {picked.platform === "PS5" ? "PlayStation 5 (макс. 7 ч)" : picked.isVip ? "ПК VIP" : "ПК Стандарт"}
-                  </div>
+          {screen === "book" && picked && (
+            <div className="card">
+              <div className="grid-header">
+                <div className="grid-title">{picked.label}</div>
+                <div className="grid-subtitle">
+                  {picked.platform === "PS5" ? "PlayStation 5 (макс. 7 ч)" : picked.isVip ? "ПК VIP" : "ПК Стандарт"}
                 </div>
-                <BookingForm pcId={picked.id} platform={picked.platform} />
               </div>
-              <div className="actions">
-                <button className="tox-button" onClick={() => setPicked(null)}>Вернуться к выбору</button>
+              <BookingForm pcId={picked.id} platform={picked.platform} />
+            </div>
+          )}
+
+          {screen === "profile" && (
+            <div className="card">
+              <div className="grid-header">
+                <div className="grid-title">Профиль</div>
+                <div className="grid-subtitle">Ваши данные</div>
               </div>
-            </>
+              <p>Здесь будет информация о пользователе, история броней и настройки.</p>
+            </div>
           )}
         </main>
 
-        {/* Нижняя навигация для мобильных */}
-        <MobileNav onNavigate={handleNavigate} />
+        <MobileNav onNavigate={(navTab) => {
+          if (navTab === "home") { setScreen("home"); setPicked(null); }
+          if (navTab === "book") { setScreen("book"); }
+          if (navTab === "profile") { setScreen("profile"); }
+        }} />
       </AuthGate>
     </WebAppShell>
   );
