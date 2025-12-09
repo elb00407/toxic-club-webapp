@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { DeviceItem } from "@/lib/devices";
 import { getUser, isAdmin, ensureAdminFlag } from "@/lib/auth";
+import ClubStats from "./ClubStats";
 
 export default function AdminPanel() {
   const [devices, setDevices] = useState<DeviceItem[]>([]);
@@ -37,13 +38,27 @@ export default function AdminPanel() {
         <div className="grid-subtitle">Управление устройствами и статистика</div>
       </div>
 
+      {/* Общая статистика устройств */}
       <div className="history-list" style={{ marginBottom: 12 }}>
-        <div className="history-item"><span className="history-label">Устройств</span><span className="history-date">{usageStats.total}</span></div>
-        <div className="history-item"><span className="history-label">Свободны</span><span className="history-date">{usageStats.free}</span></div>
-        <div className="history-item"><span className="history-label">Заняты</span><span className="history-date">{usageStats.busy}</span></div>
-        <div className="history-item"><span className="history-label">Забронированы</span><span className="history-date">{usageStats.booked}</span></div>
+        <div className="history-item">
+          <span className="history-label">Устройств</span>
+          <span className="history-date">{usageStats.total}</span>
+        </div>
+        <div className="history-item">
+          <span className="history-label">Свободны</span>
+          <span className="history-date">{usageStats.free}</span>
+        </div>
+        <div className="history-item">
+          <span className="history-label">Заняты</span>
+          <span className="history-date">{usageStats.busy}</span>
+        </div>
+        <div className="history-item">
+          <span className="history-label">Забронированы</span>
+          <span className="history-date">{usageStats.booked}</span>
+        </div>
       </div>
 
+      {/* Список устройств и управление статусами */}
       <div className="grid-header">
         <div className="grid-title">Устройства</div>
         <div className="grid-subtitle">Статусы и операции</div>
@@ -56,13 +71,22 @@ export default function AdminPanel() {
             <span className="history-label">{d.label}</span>
             <span className="history-date">{d.busyState ?? "free"}</span>
             <div style={{ display: "flex", gap: 8 }}>
-              <button className="tox-button tox-button--ghost" onClick={() => updateDeviceState(d.id, "free")}>Free</button>
-              <button className="tox-button tox-button--ghost" onClick={() => updateDeviceState(d.id, "busy")}>Busy</button>
-              <button className="tox-button tox-button--ghost" onClick={() => updateDeviceState(d.id, "booked")}>Booked</button>
+              <button className="tox-button tox-button--ghost" onClick={() => updateDeviceState(d.id, "free")}>
+                Free
+              </button>
+              <button className="tox-button tox-button--ghost" onClick={() => updateDeviceState(d.id, "busy")}>
+                Busy
+              </button>
+              <button className="tox-button tox-button--ghost" onClick={() => updateDeviceState(d.id, "booked")}>
+                Booked
+              </button>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Новый блок посещаемости клуба */}
+      <ClubStats />
     </div>
   );
 }
