@@ -1,12 +1,12 @@
 "use client";
-type Device = { id: string; label: string; platform: "PC" | "PS5"; isVip?: boolean };
+import type { DeviceItem } from "@/lib/devices";
 
 export default function DeviceGrid({
   items,
   onPick,
 }: {
-  items: Device[];
-  onPick: (d: Device) => void;
+  items: DeviceItem[];
+  onPick: (d: DeviceItem) => void;
 }) {
   return (
     <div className="devices-grid">

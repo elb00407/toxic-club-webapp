@@ -3,46 +3,34 @@ export type DeviceItem = {
   label: string;
   platform: "PC" | "PS5";
   isVip?: boolean;
-  status: "active" | "maintenance";
-  specs?: { cpu: string; gpu: string };
-  peripherals?: { keyboard?: string; mouse?: string; headset?: string; monitor?: string };
-  busyState?: "free" | "busy" | "booked";
-  imageUrl?: string;
 };
 
-const stdCount = 16;
-const vipCount = 5;
+// Генерация Standard: Toxic1..Toxic16
+const standardPCs: DeviceItem[] = Array.from({ length: 16 }, (_, i) => {
+  const n = i + 1;
+  return {
+    id: `pc-${n}`,
+    label: `Toxic${n}`,
+    platform: "PC",
+    isVip: false,
+  };
+});
 
-const stdPCs: DeviceItem[] = Array.from({ length: stdCount }).map((_, i) => ({
-  id: `pc-${String(i + 1).padStart(2, "0")}`,
-  label: `ПК #${String(i + 1).padStart(2, "0")}`,
-  platform: "PC",
-  isVip: false,
-  status: "active",
-  specs: { cpu: "Ryzen 5 5600", gpu: i % 2 ? "RTX 4060" : "RTX 3060 Ti" },
-  busyState: (i % 7 === 0) ? "busy" : "free",
-  imageUrl: undefined,
-}));
+// Генерация VIP: ToxicV1..ToxicV5
+const vipPCs: DeviceItem[] = Array.from({ length: 5 }, (_, i) => {
+  const n = i + 1;
+  return {
+    id: `pc-v${n}`,
+    label: `ToxicV${n}`,
+    platform: "PC",
+    isVip: true,
+  };
+});
 
-const vipPCs: DeviceItem[] = Array.from({ length: vipCount }).map((_, i) => ({
-  id: `pc-vip-${String(i + 1).padStart(2, "0")}`,
-  label: `ПК VIP #${String(i + 1).padStart(2, "0")}`,
-  platform: "PC",
-  isVip: true,
-  status: "active",
-  specs: { cpu: "Intel i5-13400F", gpu: "RTX 4060 Ti" },
-  busyState: (i % 3 === 0) ? "booked" : "free",
-  imageUrl: undefined,
-}));
+// Консоли при необходимости
+const consoles: DeviceItem[] = [
+  { id: "ps5-1", label: "PS5-A", platform: "PS5" },
+  { id: "ps5-2", label: "PS5-B", platform: "PS5" },
+];
 
-const ps5: DeviceItem = {
-  id: "ps5-01",
-  label: "PS5 #01",
-  platform: "PS5",
-  status: "active",
-  specs: { cpu: "Zen 2 (8C)", gpu: "RDNA 2" },
-  busyState: "free",
-  imageUrl: undefined,
-};
-
-export const devices: DeviceItem[] = [...stdPCs, ...vipPCs, ps5];
+export const devices: DeviceItem[] = [...standardPCs, ...vipPCs, ...consoles];

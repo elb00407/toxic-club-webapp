@@ -5,7 +5,7 @@ import DeviceGrid from "@/components/DeviceGrid";
 import BookingForm from "@/components/BookingForm";
 import MobileNav from "@/components/MobileNav";
 import ProfileHistory from "@/components/ProfileHistory";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { devices } from "@/lib/devices";
 
 type Picked = { id: string; platform: "PC" | "PS5"; label: string; isVip?: boolean };
@@ -16,6 +16,14 @@ export default function Page() {
   const [picked, setPicked] = useState<Picked | null>(null);
   const [tab, setTab] = useState<Tab>("STANDARD");
   const [screen, setScreen] = useState<Screen>("home");
+
+  // Инициализация темы из localStorage на монтировании
+  useEffect(() => {
+    const t = localStorage.getItem("toxicskill_theme");
+    const html = document.documentElement;
+    if (t === "night") html.setAttribute("data-theme", "night");
+    else html.removeAttribute("data-theme");
+  }, []);
 
   const filtered = useMemo(() => {
     if (tab === "STANDARD") return devices.filter((d) => d.platform === "PC" && !d.isVip);
@@ -62,9 +70,28 @@ export default function Page() {
           {screen === "home" && (
             <div className="card">
               <div className="tabs">
-                <button className={`tab ${tab === "STANDARD" ? "tab--active" : ""}`} onClick={() => setTab("STANDARD")}>Standard</button>
-                <button className={`tab ${tab === "VIP" ? "tab--active" : ""}`} onClick={() => setTab("VIP")}>VIP</button>
-                <button className={`tab ${tab === "CONSOLE" ? "tab--active" : ""}`} onClick={() => setTab("CONSOLE")}>Console</button>
+                <button className={`tab ${tab === "STANDARD" ? "tab--active" : ""}`} onClick={() => setTab("STANDARD")}>
+                  Standard
+                </button>
+                <button className={`tab ${tab === "VIP" ? "tab--active" : ""}`} onClick={() => setTab("VIP")}>
+                  VIP
+                </button>
+                <button className={`tab ${tab === "CONSOLE" ? "tab--active" : ""}`} onClick={() => setTab("CONSOLE")}>
+                  Console
+                </button>
+              </div>
+
+              <div className="grid-header">
+                <div className="grid-title">
+                  {tab === "STANDARD" && "Стандартные ПК • Toxic1–Toxic16"}
+                  {tab === "VIP" && "VIP ПК • ToxicV1–ToxicV5"}
+                  {tab === "CONSOLE" && "Консоли"}
+                </div>
+                <div className="grid-subtitle">
+                  {tab === "STANDARD" && "Ryzen 5 5600 • RTX 3060 Ti / 4060"}
+                  {tab === "VIP" && "Intel i5-13400F • RTX 4060 Ti"}
+                  {tab === "CONSOLE" && "PS5 • DualSense • 4K HDR"}
+                </div>
               </div>
 
               <DeviceGrid
@@ -106,6 +133,8 @@ export default function Page() {
         </main>
 
         <MobileNav onNavigate={handleNavigate} />
+        {/* Контейнер для тостов */}
+        <div id="toast-container" className="toast-container" aria-live="polite" aria-atomic="true" />
       </AuthGate>
     </WebAppShell>
   );

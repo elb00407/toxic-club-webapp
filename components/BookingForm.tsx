@@ -27,6 +27,24 @@ export default function BookingForm({
     onBooked(orderId);
   };
 
+  const quickDate = (type: "today" | "tomorrow" | "weekend") => {
+    const now = new Date();
+    if (type === "today") {
+      setDate(now.toISOString().slice(0, 10));
+    } else if (type === "tomorrow") {
+      const t = new Date(now);
+      t.setDate(now.getDate() + 1);
+      setDate(t.toISOString().slice(0, 10));
+    } else {
+      // ближайшая суббота
+      const t = new Date(now);
+      const day = t.getDay(); // 0 вс - 6 сб
+      const diff = (6 - day + 7) % 7;
+      t.setDate(now.getDate() + diff);
+      setDate(t.toISOString().slice(0, 10));
+    }
+  };
+
   return (
     <div className="booking-grid">
       <div className="field">
@@ -37,6 +55,11 @@ export default function BookingForm({
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
+        <div className="preset-buttons">
+          <button className="tox-button tox-button--ghost" onClick={() => quickDate("today")}>Сегодня</button>
+          <button className="tox-button tox-button--ghost" onClick={() => quickDate("tomorrow")}>Завтра</button>
+          <button className="tox-button tox-button--ghost" onClick={() => quickDate("weekend")}>Выходные</button>
+        </div>
       </div>
 
       <div className="field">
@@ -49,6 +72,9 @@ export default function BookingForm({
           value={time}
           onChange={(e) => setTime(Number(e.target.value))}
         />
+        <div className="slider-scale">
+          <span>10:00</span><span>—</span><span>23:00</span>
+        </div>
       </div>
 
       <div className="field">
@@ -61,6 +87,9 @@ export default function BookingForm({
           value={hours}
           onChange={(e) => setHours(Number(e.target.value))}
         />
+        <div className="slider-scale">
+          <span>1 ч</span><span>—</span><span>{maxDuration} ч</span>
+        </div>
         <div className="preset-buttons">
           {[1, 2, 3].map((h) => (
             <button key={h} className="tox-button tox-button--ghost" onClick={() => setHours(h)}>

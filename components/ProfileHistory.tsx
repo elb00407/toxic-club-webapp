@@ -97,9 +97,6 @@ export default function ProfileHistory() {
             ))}
         </ul>
       )}
-
-      {/* Контейнер для тостов */}
-      <div id="toast-container" className="toast-container" aria-live="polite" aria-atomic="true" />
     </div>
   );
 }
