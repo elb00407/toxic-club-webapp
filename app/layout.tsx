@@ -1,7 +1,5 @@
-"use client";
 import "./globals.css";
-import { useState } from "react";
-import Loader from "@/components/Loader";
+import LoaderWrapper from "@/components/LoaderWrapper";
 
 export const metadata = {
   title: "toxicskill",
@@ -9,13 +7,10 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [loaded, setLoaded] = useState(false);
-
   return (
     <html lang="ru">
       <body>
-        {!loaded && <Loader onFinish={() => setLoaded(true)} />}
-        {loaded && children}
+        <LoaderWrapper>{children}</LoaderWrapper>
       </body>
     </html>
   );
