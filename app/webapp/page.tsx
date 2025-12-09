@@ -75,6 +75,7 @@ export default function Page() {
     if (nav === "book") { if (!picked) setScreen("home"); else setScreen("book"); }
     if (nav === "profile") setScreen("profile");
     if (nav === "leaderboard") setScreen("leaderboard");
+    if (nav === "admin") setScreen("admin");
   };
 
   const toast = (msg: string) => {
@@ -158,7 +159,8 @@ export default function Page() {
           {screen === "admin" && adminAllowed && <AdminPanel />}
         </main>
 
-        <MobileNav onNavigate={handleNavigate} />
+        {/* Исправленный вызов MobileNav */}
+        <MobileNav onNavigate={handleNavigate} active={screen} />
         <div id="toast-container" className="toast-container" aria-live="polite" aria-atomic="true" />
       </AuthGate>
     </WebAppShell>
