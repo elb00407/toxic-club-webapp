@@ -6,13 +6,15 @@ import BookingForm from "@/components/BookingForm";
 import MobileNav from "@/components/MobileNav";
 import ProfileHistory from "@/components/ProfileHistory";
 import AdminPanel from "@/components/AdminPanel";
+import Leaderboard from "@/components/Leaderboard";
 import { useEffect, useMemo, useState } from "react";
 import { devices as baseDevices } from "@/lib/devices";
+import { addBooking } from "@/lib/leaderboard";
 import { getUser, isAdmin, ensureAdminFlag } from "@/lib/auth";
 
 type Picked = { id: string; platform: "PC" | "PS5"; label: string; isVip?: boolean };
 type Tab = "STANDARD" | "VIP" | "CONSOLE";
-type Screen = "home" | "book" | "profile" | "admin";
+type Screen = "home" | "book" | "profile" | "admin" | "leaderboard";
 
 export default function Page() {
   const [picked, setPicked] = useState<Picked | null>(null);
@@ -20,8 +22,8 @@ export default function Page() {
   const [screen, setScreen] = useState<Screen>("home");
   const [devices, setDevices] = useState(baseDevices);
   const [adminAllowed, setAdminAllowed] = useState(false);
+  const user = getUser();
 
-  // демо "онлайн" обновления статуса — без резких красных эффектов
   useEffect(() => {
     const id = setInterval(() => {
       setDevices((prev) =>
@@ -49,8 +51,7 @@ export default function Page() {
 
   useEffect(() => {
     ensureAdminFlag();
-    const u = getUser();
-    setAdminAllowed(isAdmin(u));
+    setAdminAllowed(isAdmin(getUser()));
   }, []);
 
   const filtered = useMemo(() => {
@@ -64,17 +65,11 @@ export default function Page() {
     setScreen("book");
   };
 
-  const handleNavigate = (navTab: "home" | "book" | "profile") => {
-    if (navTab === "home") {
-      setScreen("home");
-      setPicked(null);
-      setTab("STANDARD");
-    }
-    if (navTab === "book") {
-      if (!picked) setScreen("home");
-      else setScreen("book");
-    }
+  const handleNavigate = (navTab: Screen | "home" | "book" | "profile" | "leaderboard") => {
+    if (navTab === "home") { setScreen("home"); setPicked(null); setTab("STANDARD"); }
+    if (navTab === "book") { if (!picked) setScreen("home"); else setScreen("book"); }
     if (navTab === "profile") setScreen("profile");
+    if (navTab === "leaderboard") setScreen("leaderboard");
   };
 
   const toast = (msg: string) => {
@@ -101,9 +96,7 @@ export default function Page() {
                 <button className={`tab ${tab === "STANDARD" ? "tab--active" : ""}`} onClick={() => setTab("STANDARD")}>Standard</button>
                 <button className={`tab ${tab === "VIP" ? "tab--active" : ""}`} onClick={() => setTab("VIP")}>VIP</button>
                 <button className={`tab ${tab === "CONSOLE" ? "tab--active" : ""}`} onClick={() => setTab("CONSOLE")}>Console</button>
-                {adminAllowed && (
-                  <button className="tab" onClick={() => setScreen("admin")}>Admin</button>
-                )}
+                {adminAllowed && <button className="tab" onClick={() => setScreen("admin")}>Admin</button>}
               </div>
 
               <div className="grid-header">
@@ -139,27 +132,19 @@ export default function Page() {
                 platform={picked.platform}
                 onCancel={() => { setPicked(null); setScreen("home"); }}
                 onBooked={(orderId, hours) => {
-                  const raw = localStorage.getItem("toxicskill_bookings");
-                  const list = raw ? JSON.parse(raw) : [];
-                  list.push({ id: orderId, pcId: picked.id, label: picked.label, ts: Date.now(), hours });
-                  localStorage.setItem("toxicskill_bookings", JSON.stringify(list));
+                  const entry = { id: orderId, pcId: picked.id, label: picked.label, ts: Date.now(), hours, userCode: user?.nickname ?? "UNKNOWN" };
+                  addBooking(entry);
                   setDevices((prev) => prev.map((dv) => (dv.id === picked.id ? { ...dv, busyState: "booked" } : dv)));
                   toast("Бронь создана");
-                  setScreen("profile");
+                  setScreen("leaderboard");
                 }}
               />
             </div>
           )}
 
-          {screen === "profile" && (
-            <div className="card">
-              <ProfileHistory />
-            </div>
-          )}
-
-          {screen === "admin" && adminAllowed && (
-            <AdminPanel />
-          )}
+          {screen === "profile" && <div className="card"><ProfileHistory /></div>}
+          {screen === "leaderboard" && <Leaderboard />}
+          {screen === "admin" && adminAllowed && <AdminPanel />}
         </main>
 
         <MobileNav onNavigate={handleNavigate} />

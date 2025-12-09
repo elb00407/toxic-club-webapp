@@ -7,7 +7,7 @@ type User = { id: string; nickname: string };
 export default function ProfileHistory() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [user, setUser] = useState<User | null>(null);
-  const [theme, setTheme] = useState<"day" | "night" | "neon" | "classic">("day");
+  const [theme, setTheme] = useState<"night-pro" | "neon-pulse" | "classic-clean" | "cyberpunk">("night-pro");
 
   useEffect(() => {
     const rawB = localStorage.getItem("toxicskill_bookings");
@@ -15,19 +15,19 @@ export default function ProfileHistory() {
     const rawT = localStorage.getItem("toxicskill_theme");
     setBookings(rawB ? JSON.parse(rawB) : []);
     setUser(rawU ? JSON.parse(rawU) : null);
-    const t = (rawT as typeof theme) ?? "day";
+    const t = (rawT as typeof theme) ?? "night-pro";
     setTheme(t);
     applyTheme(t);
   }, []);
 
-  const applyTheme = (t: "day" | "night" | "neon" | "classic") => {
+  const applyTheme = (t: typeof theme) => {
     const el = document.documentElement;
     el.setAttribute("data-theme", t);
     localStorage.setItem("toxicskill_theme", t);
   };
 
   const switchTheme = () => {
-    const order: ("day" | "night" | "neon" | "classic")[] = ["day", "night", "neon", "classic"];
+    const order: typeof theme[] = ["night-pro", "neon-pulse", "classic-clean", "cyberpunk"];
     const next = order[(order.indexOf(theme) + 1) % order.length];
     setTheme(next);
     applyTheme(next);
@@ -70,7 +70,7 @@ export default function ProfileHistory() {
     <div>
       <div className="profile-header">
         <div className="profile-id">
-          <div className="profile-label">Ник</div>
+          <div className="profile-label">Код</div>
           <div className="profile-value">{user?.nickname ?? "—"}</div>
         </div>
         <div className="profile-actions">

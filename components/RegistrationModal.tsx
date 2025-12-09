@@ -3,29 +3,28 @@ import { useEffect, useState } from "react";
 import { LocalUser, saveUser } from "@/lib/auth";
 
 export default function RegistrationModal({ onClose }: { onClose: () => void }) {
-  const [nickname, setNickname] = useState("");
-  const [birthday, setBirthday] = useState<string>("");
-  const [prefHour, setPrefHour] = useState<number>(18);
+  const [phone, setPhone] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const body = document.body;
-    body.style.overflow = "hidden";
-    return () => {
-      body.style.overflow = "";
-    };
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
   }, []);
 
   const submit = () => {
-    const nick = nickname.trim();
-    if (!nick || nick.length < 2) {
-      setError("Введите ник (минимум 2 символа)");
+    const ph = phone.replace(/\D/g, "").trim();
+    const fn = firstName.trim();
+    const ln = lastName.trim();
+    if (ph.length < 4 || fn.length < 1 || ln.length < 1) {
+      setError("Введите последние 4 цифры телефона и первые буквы имени/фамилии");
       return;
     }
+    const code = `${ph.slice(-4)}${fn[0].toUpperCase()}${ln[0].toUpperCase()}`;
     const user: LocalUser = {
       id: `u-${Date.now()}`,
-      nickname: nick,
-      // ВАЖНО: telegram НЕ требуется для админа — авто-детект позже из Telegram WebApp
+      nickname: code,
       createdAt: Date.now(),
     };
     saveUser(user);
@@ -37,41 +36,23 @@ export default function RegistrationModal({ onClose }: { onClose: () => void }) 
       <div className="modal__backdrop" onClick={onClose} />
       <div className="modal__dialog">
         <div className="modal__header">
-          <div id="reg-title" className="grid-title">Добро пожаловать</div>
-          <div className="grid-subtitle">Создайте локальный профиль, без лишних данных</div>
+          <div id="reg-title" className="grid-title">Регистрация</div>
+          <div className="grid-subtitle">Код формата 4047ЕВ</div>
         </div>
         <div className="modal__content">
-          <label className="field-label">Ник</label>
-          <input
-            className="input"
-            value={nickname}
-            onChange={(e) => { setNickname(e.target.value); setError(null); }}
-            placeholder="Например, ToxicMaster"
-          />
+          <label className="field-label">Телефон (последние 4 цифры)</label>
+          <input className="input" value={phone} onChange={(e) => { setPhone(e.target.value); setError(null); }} placeholder="4047" />
 
-          <label className="field-label" style={{ marginTop: 12 }}>Дата рождения (необязательно)</label>
-          <input
-            type="date"
-            className="input"
-            value={birthday}
-            onChange={(e) => setBirthday(e.target.value)}
-          />
+          <label className="field-label" style={{ marginTop: 12 }}>Имя (первая буква)</label>
+          <input className="input" value={firstName} onChange={(e) => { setFirstName(e.target.value); setError(null); }} placeholder="Е" />
 
-          <label className="field-label" style={{ marginTop: 12 }}>Предпочитаемое время игры</label>
-          <input
-            type="range"
-            className="slider"
-            min={8}
-            max={23}
-            value={prefHour}
-            onChange={(e) => setPrefHour(Number(e.target.value))}
-          />
-          <div className="slider-scale"><span>08:00</span><span>—</span><span>23:00</span></div>
+          <label className="field-label" style={{ marginTop: 12 }}>Фамилия (первая буква)</label>
+          <input className="input" value={lastName} onChange={(e) => { setLastName(e.target.value); setError(null); }} placeholder="В" />
 
-          {error ? <div className="muted" style={{ color: "var(--danger)", marginTop: 6 }}>{error}</div> : null}
+          {error && <div className="muted" style={{ color: "var(--danger)" }}>{error}</div>}
 
           <div className="booking-actions" style={{ marginTop: 16 }}>
-            <button className="tox-button" onClick={submit}>Продолжить</button>
+            <button className="tox-button" onClick={submit}>Сохранить</button>
             <button className="tox-button tox-button--ghost" onClick={onClose}>Отмена</button>
           </div>
         </div>

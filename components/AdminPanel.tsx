@@ -8,17 +8,14 @@ export default function AdminPanel() {
   const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
-    ensureAdminFlag(); // авто-детект админа из Telegram, если возможно
+    ensureAdminFlag();
     const user = getUser();
     setAllowed(isAdmin(user));
     const raw = localStorage.getItem("toxicskill_devices");
     setDevices(raw ? JSON.parse(raw) : []);
   }, []);
 
-  if (!allowed) {
-    // Полностью скрываем админку для всех, кроме тебя
-    return null;
-  }
+  if (!allowed) return null;
 
   const updateDeviceState = (id: string, state: DeviceItem["busyState"]) => {
     const next = devices.map((d) => (d.id === id ? { ...d, busyState: state } : d));
