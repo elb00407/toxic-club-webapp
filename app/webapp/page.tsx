@@ -72,3 +72,10 @@ export default function Page() {
     </WebAppShell>
   );
 }
+import MobileNav from "@/components/MobileNav";
+// внутри компонента Page:
+<MobileNav onNavigate={(tab) => {
+  if (tab === "home") setPicked(null);
+  if (tab === "book") {/* можно открыть форму */}
+  if (tab === "profile") {/* можно показать профиль */}
+}} />
