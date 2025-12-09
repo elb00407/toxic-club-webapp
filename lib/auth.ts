@@ -2,7 +2,6 @@ export type LocalUser = {
   id: string;
   nickname: string;
   telegram?: string;
-  isAdmin?: boolean;
   createdAt: number;
 };
 
@@ -23,6 +22,5 @@ export function logoutUser() {
 
 export function isAdmin(user: LocalUser | null): boolean {
   if (!user) return false;
-  // доступ строго по Telegram username
   return (user.telegram ?? "").toLowerCase() === "@maks_lavrow";
 }

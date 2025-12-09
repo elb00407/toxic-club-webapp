@@ -9,7 +9,9 @@ export default function WebAppShell({
   return (
     <div className="app-shell">
       <header className="topbar">
-        <button className="tox-brand" onClick={onBrandClick}>toxicskill</button>
+        <button className="tox-brand" onClick={onBrandClick}>
+          <span className="tox-brand__glow">toxicskill</span>
+        </button>
       </header>
       <div className="content">{children}</div>
     </div>

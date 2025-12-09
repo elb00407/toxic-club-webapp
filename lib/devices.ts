@@ -28,9 +28,9 @@ const vipPCs: DeviceItem[] = Array.from({ length: 5 }, (_, i) => ({
   specs: vipSpecs,
 }));
 
+// Оставляем только одну консоль
 const consoles: DeviceItem[] = [
-  { id: "ps5-1", label: "PS5-A", platform: "PS5", busyState: "free", specs: { cpu: "Zen 2", gpu: "RDNA 2", ram: "16 GB" } },
-  { id: "ps5-2", label: "PS5-B", platform: "PS5", busyState: "free", specs: { cpu: "Zen 2", gpu: "RDNA 2", ram: "16 GB" } },
+  { id: "ps5-1", label: "PS5", platform: "PS5", busyState: "free", specs: { cpu: "Zen 2", gpu: "RDNA 2", ram: "16 GB" } },
 ];
 
 export const devices: DeviceItem[] = [...standardPCs, ...vipPCs, ...consoles];

@@ -57,7 +57,7 @@ html, body {
 }
 .container { max-width: 1140px; margin: 0 auto; padding: 18px; }
 
-/* Верхняя панель */
+/* Верхняя панель с анимированным брендом */
 .topbar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -70,10 +70,29 @@ html, body {
   z-index: 1000;
 }
 .tox-brand {
+  position: relative;
   font-weight: 900; font-size: 22px; letter-spacing: .04em;
   background: linear-gradient(90deg, var(--neon-1), var(--neon-2));
   -webkit-background-clip: text; color: transparent;
   cursor: pointer;
+  transition: transform .2s ease;
+}
+.tox-brand:hover { transform: translateY(-1px); }
+.tox-brand__glow {
+  position: relative;
+}
+.tox-brand::after {
+  content: "";
+  position: absolute; inset: -8px -12px -8px -12px;
+  background: radial-gradient(120px at 50% 50%, rgba(0,255,102,.18), transparent 70%);
+  filter: blur(6px);
+  opacity: .6;
+  pointer-events: none;
+  animation: brandPulse 2.4s ease-in-out infinite;
+}
+@keyframes brandPulse {
+  0%,100% { opacity: .45; transform: scale(1); }
+  50% { opacity: .9; transform: scale(1.02); }
 }
 
 /* Контент */
@@ -129,11 +148,8 @@ html, body {
   animation: fadeInUp .4s ease both;
 }
 .device-tile--std { background: linear-gradient(180deg, #181a1e, #121317); }
-.device-tile--vip {
-  border: 1px solid transparent;
-  background-image: linear-gradient(#121317, #121317), linear-gradient(135deg, var(--neon-1), var(--neon-2));
-  background-origin: border-box; background-clip: content-box, border-box;
-}
+/* Убрали VIP-обводку */
+.device-tile--vip { background: linear-gradient(180deg, #1a1c20, #121317); }
 .device-tile--ps5 {
   background: radial-gradient(140px at 20% 80%, rgba(160,180,255,.16), rgba(45,88,255,.16)), linear-gradient(180deg, #181a1e, #121317);
 }
@@ -142,7 +158,6 @@ html, body {
 .device-tile--booked::before { content: ""; position: absolute; inset: 0; background: rgba(255,80,80,.16); backdrop-filter: blur(1.2px); pointer-events: none; }
 
 .device-tile__label { font-weight: 900; font-size: 16px; letter-spacing: .01em; text-align: center; }
-.device-tile__badge { position: absolute; top: 8px; left: 8px; font-size: 11px; font-weight: 800; color: #0a0a0a; border-radius: 999px; padding: 5px 9px; background: linear-gradient(135deg, var(--neon-1), var(--neon-2)); }
 .device-dot { position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; border-radius: 999px; }
 .device-dot--ok { background: linear-gradient(135deg,#8fff00,#00ff66); box-shadow: 0 0 6px rgba(0,255,102,.35); }
 .device-dot--bad { background: #ff5a5a; }
@@ -220,7 +235,7 @@ html, body {
 .modal__header { margin-bottom: 12px; }
 .modal__content { display: grid; gap: 8px; }
 
-/* Loader */
+/* Loader — вернули загрузку приложения */
 .loader-screen {
   position: fixed; inset: 0;
   background: var(--bg-0);

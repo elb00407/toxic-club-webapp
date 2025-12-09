@@ -9,7 +9,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const user = getUser();
-    if (!user) setNeedReg(true);
+    setNeedReg(!user);
     setReady(true);
   }, []);
 

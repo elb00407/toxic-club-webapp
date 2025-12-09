@@ -100,7 +100,7 @@ export default function Page() {
                 <div className="grid-title">
                   {tab === "STANDARD" && "Стандартные ПК • Toxic1–Toxic16"}
                   {tab === "VIP" && "VIP ПК • ToxicV1–ToxicV5"}
-                  {tab === "CONSOLE" && "Консоли"}
+                  {tab === "CONSOLE" && "Консоль PS5"}
                 </div>
                 <div className="grid-subtitle">
                   {tab === "STANDARD" && "Ryzen 5 5600 • RTX 3060 Ti / 4060"}

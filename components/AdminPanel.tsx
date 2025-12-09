@@ -14,6 +14,11 @@ export default function AdminPanel() {
     setDevices(raw ? JSON.parse(raw) : []);
   }, []);
 
+  if (!allowed) {
+    // Полностью скрываем админку для остальных (не рендерим ничего)
+    return null;
+  }
+
   const updateDeviceState = (id: string, state: DeviceItem["busyState"]) => {
     const next = devices.map((d) => (d.id === id ? { ...d, busyState: state } : d));
     setDevices(next);
@@ -27,18 +32,6 @@ export default function AdminPanel() {
     const booked = devices.filter((d) => d.busyState === "booked").length;
     return { total, free, busy, booked };
   }, [devices]);
-
-  if (!allowed) {
-    return (
-      <div className="card">
-        <div className="grid-header">
-          <div className="grid-title">Доступ запрещён</div>
-          <div className="grid-subtitle">Админ‑панель доступна только владельцу</div>
-        </div>
-        <div className="muted">Свяжитесь с администратором для получения прав</div>
-      </div>
-    );
-  }
 
   return (
     <div className="card">
