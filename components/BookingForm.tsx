@@ -10,71 +10,64 @@ export default function BookingForm({
   pcId: string;
   platform: "PC" | "PS5";
   onCancel: () => void;
-  onBooked: (orderId: string, hours: number) => void;
+  onBooked: (orderId: string, hours: number, dateISO: string, timeStart: number) => void;
 }) {
-  const [date, setDate] = useState<string>("");
-  const [time, setTime] = useState<number>(12);
+  const [dateISO, setDateISO] = useState<string>(new Date().toISOString().slice(0, 10));
+  const [timeStart, setTimeStart] = useState<number>(12);
   const [hours, setHours] = useState<number>(2);
 
   const maxDuration = platform === "PS5" ? 7 : 8;
 
   const submit = () => {
-    if (!date) {
-      alert("Выберите дату");
-      return;
-    }
     const orderId = `order-${pcId}-${Date.now()}`;
-    onBooked(orderId, hours);
+    onBooked(orderId, hours, dateISO, timeStart);
   };
 
-  const quickDate = (type: "today" | "tomorrow" | "weekend") => {
-    const now = new Date();
-    if (type === "today") setDate(now.toISOString().slice(0, 10));
-    else if (type === "tomorrow") {
-      const t = new Date(now);
-      t.setDate(now.getDate() + 1);
-      setDate(t.toISOString().slice(0, 10));
-    } else {
-      const t = new Date(now);
-      const day = t.getDay();
-      const diff = (6 - day + 7) % 7;
-      t.setDate(now.getDate() + diff);
-      setDate(t.toISOString().slice(0, 10));
-    }
+  const presetDate = (daysFromToday: number) => {
+    const t = new Date();
+    t.setDate(t.getDate() + daysFromToday);
+    setDateISO(t.toISOString().slice(0, 10));
   };
 
   const countdownLabel = useMemo(() => {
-    const endHour = time + hours;
-    return `Сессия: ${time}:00 → ${endHour}:00`;
-  }, [time, hours]);
+    const endHour = timeStart + hours;
+    return `Сессия: ${timeStart}:00 → ${endHour}:00`;
+  }, [timeStart, hours]);
+
+  const hoursMarks = Array.from({ length: 14 }, (_, i) => 10 + i); // 10..23
 
   return (
     <div className="booking-grid">
+      {/* Наш кастомный календарь */}
       <div className="field">
         <label className="field-label">Дата</label>
-        <input type="date" className="input" value={date} onChange={(e) => setDate(e.target.value)} />
-        <div className="preset-buttons">
-          <button className="tox-button tox-button--ghost" onClick={() => quickDate("today")}>Сегодня</button>
-          <button className="tox-button tox-button--ghost" onClick={() => quickDate("tomorrow")}>Завтра</button>
-          <button className="tox-button tox-button--ghost" onClick={() => quickDate("weekend")}>Выходные</button>
+        <div className="calendar__panel">
+          <input type="date" className="input" value={dateISO} onChange={(e) => setDateISO(e.target.value)} />
+          <div className="preset-buttons" style={{ marginTop: 8 }}>
+            <button className="tox-button tox-button--ghost" onClick={() => presetDate(0)}>Сегодня</button>
+            <button className="tox-button tox-button--ghost" onClick={() => presetDate(1)}>Завтра</button>
+            <button className="tox-button tox-button--ghost" onClick={() => presetDate(2)}>+2 дня</button>
+          </div>
         </div>
       </div>
 
+      {/* Наш кастомный ползунок времени */}
       <div className="field">
-        <label className="field-label">Время начала: {time}:00</label>
-        <input type="range" className="slider" min={10} max={23} value={time} onChange={(e) => setTime(Number(e.target.value))} />
-        <div className="slider-scale"><span>10:00</span><span>—</span><span>23:00</span></div>
+        <label className="field-label">Время начала: {timeStart}:00</label>
+        <div className="slider-panel">
+          <input type="range" className="slider" min={10} max={23} step={1} value={timeStart} onChange={(e) => setTimeStart(Number(e.target.value))} />
+          <div className="slider-scale">
+            {hoursMarks.map((h) => (
+              <span key={h} style={{ width: "calc(100% / 14)", textAlign: "center", fontSize: 11 }}>{h}</span>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="field">
         <label className="field-label">Длительность: {hours} ч</label>
-        <input type="range" className="slider" min={1} max={maxDuration} value={hours} onChange={(e) => setHours(Number(e.target.value))} />
+        <input type="range" className="slider" min={1} max={maxDuration} step={1} value={hours} onChange={(e) => setHours(Number(e.target.value))} />
         <div className="slider-scale"><span>1 ч</span><span>—</span><span>{maxDuration} ч</span></div>
-        <div className="preset-buttons">
-          {[1, 2, 3].map((h) => (
-            <button key={h} className="tox-button tox-button--ghost" onClick={() => setHours(h)}>{h} ч</button>
-          ))}
-        </div>
       </div>
 
       <div className="grid-subtitle">{countdownLabel}</div>

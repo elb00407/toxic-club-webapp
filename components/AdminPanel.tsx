@@ -9,8 +9,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     ensureAdminFlag();
-    const user = getUser();
-    setAllowed(isAdmin(user));
+    setAllowed(isAdmin(getUser()));
     const raw = localStorage.getItem("toxicskill_devices");
     setDevices(raw ? JSON.parse(raw) : []);
   }, []);

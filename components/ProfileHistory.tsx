@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 
-type Booking = { id: string; pcId: string; label: string; ts: number; hours?: number };
+type Booking = { id: string; pcId: string; label: string; ts: number; hours?: number; dateISO?: string; timeStart?: number };
 type User = { id: string; nickname: string };
 
 export default function ProfileHistory() {
@@ -74,12 +74,8 @@ export default function ProfileHistory() {
           <div className="profile-value">{user?.nickname ?? "—"}</div>
         </div>
         <div className="profile-actions">
-          <button className="tox-button tox-button--ghost" onClick={switchTheme}>
-            Тема: {theme}
-          </button>
-          <button className="tox-button tox-button--ghost" onClick={clearHistory}>
-            Очистить историю
-          </button>
+          <button className="tox-button tox-button--ghost" onClick={switchTheme}>Тема: {theme}</button>
+          <button className="tox-button tox-button--ghost" onClick={clearHistory}>Очистить историю</button>
         </div>
       </div>
 
@@ -93,9 +89,7 @@ export default function ProfileHistory() {
           <div className="history-item"><span className="history-label">Часы</span><span className="history-date">{stats.totalHours}</span></div>
           <div className="history-item"><span className="history-label">Уровень</span><span className="history-date">{stats.level}</span></div>
         </div>
-        {stats.achievements.length ? (
-          <div className="grid-subtitle" style={{ marginTop: 8 }}>Ачивки: {stats.achievements.join(" • ")}</div>
-        ) : null}
+        {stats.achievements.length ? <div className="grid-subtitle" style={{ marginTop: 8 }}>Ачивки: {stats.achievements.join(" • ")}</div> : null}
       </div>
 
       <div className="grid-header" style={{ marginTop: 12 }}>
@@ -107,15 +101,14 @@ export default function ProfileHistory() {
         <div className="muted">История пуста. Сделайте первую бронь.</div>
       ) : (
         <ul className="history-list">
-          {bookings
-            .slice()
-            .reverse()
-            .map((i) => (
-              <li key={i.id} className="history-item">
-                <span className="history-label">{i.label}</span>
-                <span className="history-date">{new Date(i.ts).toLocaleString("ru-RU")}</span>
-              </li>
-            ))}
+          {bookings.slice().reverse().map((i) => (
+            <li key={i.id} className="history-item">
+              <span className="history-label">{i.label}</span>
+              <span className="history-date">
+                {i.dateISO ?? new Date(i.ts).toISOString().slice(0, 10)} • {i.timeStart ?? "--"}:00
+              </span>
+            </li>
+          ))}
         </ul>
       )}
 

@@ -42,15 +42,11 @@ export default function RegistrationModal({ onClose }: { onClose: () => void }) 
         <div className="modal__content">
           <label className="field-label">Телефон (последние 4 цифры)</label>
           <input className="input" value={phone} onChange={(e) => { setPhone(e.target.value); setError(null); }} placeholder="4047" />
-
           <label className="field-label" style={{ marginTop: 12 }}>Имя (первая буква)</label>
           <input className="input" value={firstName} onChange={(e) => { setFirstName(e.target.value); setError(null); }} placeholder="Е" />
-
           <label className="field-label" style={{ marginTop: 12 }}>Фамилия (первая буква)</label>
           <input className="input" value={lastName} onChange={(e) => { setLastName(e.target.value); setError(null); }} placeholder="В" />
-
           {error && <div className="muted" style={{ color: "var(--danger)" }}>{error}</div>}
-
           <div className="booking-actions" style={{ marginTop: 16 }}>
             <button className="tox-button" onClick={submit}>Сохранить</button>
             <button className="tox-button tox-button--ghost" onClick={onClose}>Отмена</button>

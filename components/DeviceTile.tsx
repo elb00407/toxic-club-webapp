@@ -4,7 +4,6 @@ import type { DeviceItem } from "@/lib/devices";
 export default function DeviceTile({ d, onPick }: { d: DeviceItem; onPick: (d: DeviceItem) => void }) {
   const baseClass =
     d.platform === "PS5" ? "device-tile device-tile--ps5" : d.isVip ? "device-tile device-tile--vip" : "device-tile device-tile--std";
-
   const stateClass =
     d.busyState === "booked" ? "device-tile--booked" : d.busyState === "busy" ? "device-tile--busy" : "";
 

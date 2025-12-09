@@ -65,11 +65,11 @@ export default function Page() {
     setScreen("book");
   };
 
-  const handleNavigate = (navTab: Screen | "home" | "book" | "profile" | "leaderboard") => {
-    if (navTab === "home") { setScreen("home"); setPicked(null); setTab("STANDARD"); }
-    if (navTab === "book") { if (!picked) setScreen("home"); else setScreen("book"); }
-    if (navTab === "profile") setScreen("profile");
-    if (navTab === "leaderboard") setScreen("leaderboard");
+  const handleNavigate = (nav: Screen | "home" | "book" | "profile" | "leaderboard") => {
+    if (nav === "home") { setScreen("home"); setPicked(null); setTab("STANDARD"); }
+    if (nav === "book") { if (!picked) setScreen("home"); else setScreen("book"); }
+    if (nav === "profile") setScreen("profile");
+    if (nav === "leaderboard") setScreen("leaderboard");
   };
 
   const toast = (msg: string) => {
@@ -112,10 +112,7 @@ export default function Page() {
                 </div>
               </div>
 
-              <DeviceGrid
-                items={filtered}
-                onPick={(d) => openBooking({ id: d.id, platform: d.platform, label: d.label, isVip: d.isVip })}
-              />
+              <DeviceGrid items={filtered} onPick={(d) => openBooking({ id: d.id, platform: d.platform, label: d.label, isVip: d.isVip })} />
             </div>
           )}
 
@@ -131,8 +128,8 @@ export default function Page() {
                 pcId={picked.id}
                 platform={picked.platform}
                 onCancel={() => { setPicked(null); setScreen("home"); }}
-                onBooked={(orderId, hours) => {
-                  const entry = { id: orderId, pcId: picked.id, label: picked.label, ts: Date.now(), hours, userCode: user?.nickname ?? "UNKNOWN" };
+                onBooked={(orderId, hours, dateISO, timeStart) => {
+                  const entry = { id: orderId, pcId: picked.id, label: picked.label, ts: Date.now(), hours, userCode: user?.nickname ?? "UNKNOWN", dateISO, timeStart };
                   addBooking(entry);
                   setDevices((prev) => prev.map((dv) => (dv.id === picked.id ? { ...dv, busyState: "booked" } : dv)));
                   toast("Бронь создана");

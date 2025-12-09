@@ -10,12 +10,11 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const user = getUser();
     setNeedReg(!user);
-    ensureAdminFlag(); // автоматически проставит админ-доступ, если мы в Telegram и это ты
+    ensureAdminFlag();
     setReady(true);
   }, []);
 
   if (!ready) return null;
-
   return (
     <>
       {needReg && <RegistrationModal onClose={() => setNeedReg(false)} />}

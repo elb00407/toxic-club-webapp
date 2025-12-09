@@ -13,11 +13,11 @@ export default function Leaderboard() {
     <div className="card">
       <div className="grid-header">
         <div className="grid-title">Лидерборд</div>
-        <div className="grid-subtitle">Топ игроков по часам и броням</div>
+        <div className="grid-subtitle">Топ по часам и броням</div>
       </div>
 
       {rows.length === 0 ? (
-        <div className="muted">Пока нет данных. Совершите первую бронь.</div>
+        <div className="muted">Пока нет данных.</div>
       ) : (
         <ol className="history-list" style={{ listStyle: "decimal inside" }}>
           {rows.map((r) => (
