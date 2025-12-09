@@ -17,19 +17,15 @@ export default function WebAppShell({
     if (tapTimer.current) window.clearTimeout(tapTimer.current);
     tapCount.current += 1;
     tapTimer.current = window.setTimeout(() => {
-      if (tapCount.current >= 5) {
-        setAdminOverride(true);
-      }
+      if (tapCount.current >= 5) setAdminOverride(true);
       tapCount.current = 0;
     }, 600);
-    if (onBrandClick) onBrandClick();
+    onBrandClick?.();
   };
 
   const onBrandPressed = () => {
     if (holdTimer.current) window.clearTimeout(holdTimer.current);
-    holdTimer.current = window.setTimeout(() => {
-      setAdminOverride(true);
-    }, 1500);
+    holdTimer.current = window.setTimeout(() => setAdminOverride(true), 1200);
   };
 
   const onBrandReleased = () => {

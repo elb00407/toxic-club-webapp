@@ -34,11 +34,10 @@ export default function BookingForm({
     return `Сессия: ${timeStart}:00 → ${endHour}:00`;
   }, [timeStart, hours]);
 
-  const hoursMarks = Array.from({ length: 14 }, (_, i) => 10 + i); // 10..23
+  const hourMarks = Array.from({ length: 14 }, (_, i) => 10 + i); // 10..23
 
   return (
     <div className="booking-grid">
-      {/* Наш кастомный календарь */}
       <div className="field">
         <label className="field-label">Дата</label>
         <div className="calendar__panel">
@@ -51,13 +50,12 @@ export default function BookingForm({
         </div>
       </div>
 
-      {/* Наш кастомный ползунок времени */}
       <div className="field">
         <label className="field-label">Время начала: {timeStart}:00</label>
         <div className="slider-panel">
           <input type="range" className="slider" min={10} max={23} step={1} value={timeStart} onChange={(e) => setTimeStart(Number(e.target.value))} />
           <div className="slider-scale">
-            {hoursMarks.map((h) => (
+            {hourMarks.map((h) => (
               <span key={h} style={{ width: "calc(100% / 14)", textAlign: "center", fontSize: 11 }}>{h}</span>
             ))}
           </div>

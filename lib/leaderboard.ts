@@ -1,4 +1,13 @@
-export type BookingEntry = { id: string; pcId: string; label: string; ts: number; hours?: number; userCode?: string };
+export type BookingEntry = {
+  id: string;
+  pcId: string;
+  label: string;
+  ts: number;
+  hours?: number;
+  userCode: string; // ТЕПЕРЬ ОБЯЗАТЕЛЬНО
+  dateISO?: string;
+  timeStart?: number;
+};
 
 const KEY_BOOKINGS = "toxicskill_bookings";
 
@@ -20,7 +29,7 @@ export function buildLeaderboard(limit = 10): LeaderRow[] {
   const list = readBookings();
   const map = new Map<string, LeaderRow>();
   for (const e of list) {
-    const code = e.userCode ?? "UNKNOWN";
+    const code = e.userCode || "UNKNOWN";
     const prev = map.get(code);
     const hours = e.hours ?? 2;
     if (!prev) {

@@ -22,7 +22,12 @@ export default function Page() {
   const [screen, setScreen] = useState<Screen>("home");
   const [devices, setDevices] = useState(baseDevices);
   const [adminAllowed, setAdminAllowed] = useState(false);
-  const user = getUser();
+  const [userCode, setUserCode] = useState<string>("UNKNOWN");
+
+  useEffect(() => {
+    const u = getUser();
+    setUserCode(u?.nickname ?? "UNKNOWN");
+  }, []);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -129,7 +134,16 @@ export default function Page() {
                 platform={picked.platform}
                 onCancel={() => { setPicked(null); setScreen("home"); }}
                 onBooked={(orderId, hours, dateISO, timeStart) => {
-                  const entry = { id: orderId, pcId: picked.id, label: picked.label, ts: Date.now(), hours, userCode: user?.nickname ?? "UNKNOWN", dateISO, timeStart };
+                  const entry = {
+                    id: orderId,
+                    pcId: picked.id,
+                    label: picked.label,
+                    ts: Date.now(),
+                    hours,
+                    userCode: userCode,
+                    dateISO,
+                    timeStart,
+                  };
                   addBooking(entry);
                   setDevices((prev) => prev.map((dv) => (dv.id === picked.id ? { ...dv, busyState: "booked" } : dv)));
                   toast("Бронь создана");

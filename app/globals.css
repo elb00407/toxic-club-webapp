@@ -14,6 +14,7 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* Улучшенные темы: light-prime вместо classic-clean */
 html[data-theme="night-pro"] {
   --bg-0: #050607; --bg-1: #0b0e12; --text: #e3e7ee; --muted: #9aa3b1; --border: #1a1f26;
   --neon-1: #7dff91; --neon-2: #5cd6ff;
@@ -22,9 +23,9 @@ html[data-theme="neon-pulse"] {
   --bg-0: #000000; --bg-1: #0a0a0a; --text: #e7ecf4; --muted: #a0a6b3; --border: #161616;
   --neon-1: #ff00ff; --neon-2: #00ffff;
 }
-html[data-theme="classic-clean"] {
-  --bg-0: #f7f7f7; --bg-1: #ececec; --text: #111; --muted: #555; --border: #cfcfcf;
-  --neon-1: #007bff; --neon-2: #00c851;
+html[data-theme="light-prime"] {
+  --bg-0: #fafbfc; --bg-1: #f0f2f5; --text: #0f141a; --muted: #6b7280; --border: #e3e6ea;
+  --neon-1: #0ea5e9; --neon-2: #22c55e;
 }
 html[data-theme="cyberpunk"] {
   --bg-0: #04050a; --bg-1: #0e0a12; --text: #e8f6ff; --muted: #a0a7bf; --border: #23243a;
@@ -86,13 +87,23 @@ html, body {
 .tox-button:disabled { opacity: .5; cursor: not-allowed; }
 .tox-button--ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
 
-/* Инпуты — фиксы для iOS/Android, чтобы календарь и слайдер были видны */
+/* Инпуты / календарь / ползунок — фиксы видимости */
 .field-label { color: var(--muted); font-size: 12px; margin-bottom: 6px; display: block; }
 .input { background: #121317; color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-weight: 700; width: 100%; appearance: none; }
 .input::-webkit-calendar-picker-indicator { filter: invert(1); opacity: .9; cursor: pointer; }
 .input:focus { outline: none; border-color: var(--neon-2); box-shadow: 0 0 0 3px rgba(0,255,102,.15); }
 
-/* Сетка устройств и статусы — без «пикселей» */
+.slider { width: 100%; accent-color: var(--neon-2); margin-top: 12px; appearance: none; }
+.slider::-webkit-slider-runnable-track { height: 6px; background: #1b1d22; border-radius: 999px; border: 1px solid var(--border); }
+.slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 999px; background: linear-gradient(135deg, var(--neon-1), var(--neon-2)); margin-top: -6px; border: none; }
+.slider::-moz-range-track { height: 6px; background: #1b1d22; border-radius: 999px; border: 1px solid var(--border); }
+.slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 999px; background: linear-gradient(135deg, var(--neon-1), var(--neon-2)); border: none; }
+.slider-scale { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+
+/* Календарь панель */
+.calendar__panel { margin-top: 8px; background: #14161a; border: 1px solid var(--border); border-radius: 16px; padding: 12px; box-shadow: 0 12px 40px var(--shadow-0); width: 100%; }
+
+/* Сетка устройств и статусы — мягкие */
 .devices-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .device-tile {
   position: relative; border-radius: 16px; border: 1px solid var(--border);
@@ -114,18 +125,7 @@ html, body {
 
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Слайдеры — фикс видимости */
-.slider { width: 100%; accent-color: var(--neon-2); margin-top: 12px; appearance: none; }
-.slider::-webkit-slider-runnable-track { height: 6px; background: #1b1d22; border-radius: 999px; border: 1px solid var(--border); }
-.slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 999px; background: linear-gradient(135deg, var(--neon-1), var(--neon-2)); margin-top: -6px; border: none; }
-.slider::-moz-range-track { height: 6px; background: #1b1d22; border-radius: 999px; border: 1px solid var(--border); }
-.slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 999px; background: linear-gradient(135deg, var(--neon-1), var(--neon-2)); border: none; }
-.slider-scale { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
-
-/* Календарь панель */
-.calendar__panel { margin-top: 8px; background: #14161a; border: 1px solid var(--border); border-radius: 16px; padding: 12px; box-shadow: 0 12px 40px var(--shadow-0); width: 100%; }
-
-/* Профиль, история, тосты, низ навигации — как раньше */
+/* Профиль / история / тосты */
 .profile-header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .profile-id { display: grid; gap: 4px; }
 .profile-label { color: var(--muted); font-size: 12px; }
@@ -140,6 +140,7 @@ html, body {
 .toast { opacity: 0; transform: translateY(8px); transition: opacity .2s ease, transform .2s ease; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 13px; }
 .toast--show { opacity: 1; transform: translateY(0); }
 
+/* Нижняя навигация */
 .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(16,18,21,.85); border-top: 1px solid var(--border); backdrop-filter: blur(8px); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; padding-bottom: var(--safe-bottom); }
 .mobile-nav__btn { flex: 1; background: none; border: none; color: var(--muted); font-size: 14px; font-weight: 700; padding: 8px 0; }
 .mobile-nav__btn.active { color: var(--neon-2); }

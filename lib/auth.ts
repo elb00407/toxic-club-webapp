@@ -1,6 +1,6 @@
 export type LocalUser = {
   id: string;
-  nickname: string; // формат 4047ЕВ
+  nickname: string; // формат, например: 4047ЕВ
   createdAt: number;
   telegram?: string;
 };
@@ -9,7 +9,8 @@ const KEY_USER = "toxicskill_user";
 const KEY_ADMIN = "toxicskill_admin";
 
 export function getUser(): LocalUser | null {
-  const raw = typeof window !== "undefined" ? localStorage.getItem(KEY_USER) : null;
+  if (typeof window === "undefined") return null;
+  const raw = localStorage.getItem(KEY_USER);
   return raw ? (JSON.parse(raw) as LocalUser) : null;
 }
 
@@ -40,7 +41,8 @@ export function setAdminOverride(on: boolean) {
 }
 
 export function isAdmin(user: LocalUser | null): boolean {
-  const override = typeof window !== "undefined" ? localStorage.getItem(KEY_ADMIN) === "1" : false;
+  if (typeof window === "undefined") return false;
+  const override = localStorage.getItem(KEY_ADMIN) === "1";
   if (override) return true;
   const tg = user?.telegram ?? getTelegramUsername();
   return (tg ?? "").toLowerCase() === "@maks_lavrow";

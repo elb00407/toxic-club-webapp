@@ -7,7 +7,7 @@ type User = { id: string; nickname: string };
 export default function ProfileHistory() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [user, setUser] = useState<User | null>(null);
-  const [theme, setTheme] = useState<"night-pro" | "neon-pulse" | "classic-clean" | "cyberpunk">("night-pro");
+  const [theme, setTheme] = useState<"night-pro" | "neon-pulse" | "light-prime" | "cyberpunk">("night-pro");
 
   useEffect(() => {
     const rawB = localStorage.getItem("toxicskill_bookings");
@@ -27,7 +27,7 @@ export default function ProfileHistory() {
   };
 
   const switchTheme = () => {
-    const order: typeof theme[] = ["night-pro", "neon-pulse", "classic-clean", "cyberpunk"];
+    const order: typeof theme[] = ["night-pro", "neon-pulse", "light-prime", "cyberpunk"];
     const next = order[(order.indexOf(theme) + 1) % order.length];
     setTheme(next);
     applyTheme(next);
