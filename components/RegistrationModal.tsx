@@ -4,7 +4,8 @@ import { LocalUser, saveUser } from "@/lib/auth";
 
 export default function RegistrationModal({ onClose }: { onClose: () => void }) {
   const [nickname, setNickname] = useState("");
-  const [telegram, setTelegram] = useState("");
+  const [birthday, setBirthday] = useState<string>("");
+  const [prefHour, setPrefHour] = useState<number>(18);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -17,17 +18,14 @@ export default function RegistrationModal({ onClose }: { onClose: () => void }) 
 
   const submit = () => {
     const nick = nickname.trim();
-    const tg = telegram.trim();
     if (!nick || nick.length < 2) {
       setError("Введите ник (минимум 2 символа)");
       return;
     }
-    const normalizedTg = tg ? (tg.startsWith("@") ? tg : `@${tg}`) : undefined;
-
     const user: LocalUser = {
       id: `u-${Date.now()}`,
       nickname: nick,
-      telegram: normalizedTg,
+      // ВАЖНО: telegram НЕ требуется для админа — авто-детект позже из Telegram WebApp
       createdAt: Date.now(),
     };
     saveUser(user);
@@ -40,7 +38,7 @@ export default function RegistrationModal({ onClose }: { onClose: () => void }) 
       <div className="modal__dialog">
         <div className="modal__header">
           <div id="reg-title" className="grid-title">Добро пожаловать</div>
-          <div className="grid-subtitle">Создайте локальный профиль, чтобы начать</div>
+          <div className="grid-subtitle">Создайте локальный профиль, без лишних данных</div>
         </div>
         <div className="modal__content">
           <label className="field-label">Ник</label>
@@ -51,13 +49,24 @@ export default function RegistrationModal({ onClose }: { onClose: () => void }) 
             placeholder="Например, ToxicMaster"
           />
 
-          <label className="field-label" style={{ marginTop: 12 }}>Telegram (для доступа к админке)</label>
+          <label className="field-label" style={{ marginTop: 12 }}>Дата рождения (необязательно)</label>
           <input
+            type="date"
             className="input"
-            value={telegram}
-            onChange={(e) => setTelegram(e.target.value)}
-            placeholder="@MAKS_LAVROW"
+            value={birthday}
+            onChange={(e) => setBirthday(e.target.value)}
           />
+
+          <label className="field-label" style={{ marginTop: 12 }}>Предпочитаемое время игры</label>
+          <input
+            type="range"
+            className="slider"
+            min={8}
+            max={23}
+            value={prefHour}
+            onChange={(e) => setPrefHour(Number(e.target.value))}
+          />
+          <div className="slider-scale"><span>08:00</span><span>—</span><span>23:00</span></div>
 
           {error ? <div className="muted" style={{ color: "var(--danger)", marginTop: 6 }}>{error}</div> : null}
 

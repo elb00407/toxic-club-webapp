@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import type { DeviceItem } from "@/lib/devices";
-import { getUser, isAdmin } from "@/lib/auth";
+import { getUser, isAdmin, ensureAdminFlag } from "@/lib/auth";
 
 export default function AdminPanel() {
   const [devices, setDevices] = useState<DeviceItem[]>([]);
   const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
+    ensureAdminFlag(); // авто-детект админа из Telegram, если возможно
     const user = getUser();
     setAllowed(isAdmin(user));
     const raw = localStorage.getItem("toxicskill_devices");
@@ -15,7 +16,7 @@ export default function AdminPanel() {
   }, []);
 
   if (!allowed) {
-    // Полностью скрываем админку для остальных (не рендерим ничего)
+    // Полностью скрываем админку для всех, кроме тебя
     return null;
   }
 
@@ -41,22 +42,10 @@ export default function AdminPanel() {
       </div>
 
       <div className="history-list" style={{ marginBottom: 12 }}>
-        <div className="history-item">
-          <span className="history-label">Устройств</span>
-          <span className="history-date">{usageStats.total}</span>
-        </div>
-        <div className="history-item">
-          <span className="history-label">Свободны</span>
-          <span className="history-date">{usageStats.free}</span>
-        </div>
-        <div className="history-item">
-          <span className="history-label">Заняты</span>
-          <span className="history-date">{usageStats.busy}</span>
-        </div>
-        <div className="history-item">
-          <span className="history-label">Забронированы</span>
-          <span className="history-date">{usageStats.booked}</span>
-        </div>
+        <div className="history-item"><span className="history-label">Устройств</span><span className="history-date">{usageStats.total}</span></div>
+        <div className="history-item"><span className="history-label">Свободны</span><span className="history-date">{usageStats.free}</span></div>
+        <div className="history-item"><span className="history-label">Заняты</span><span className="history-date">{usageStats.busy}</span></div>
+        <div className="history-item"><span className="history-label">Забронированы</span><span className="history-date">{usageStats.booked}</span></div>
       </div>
 
       <div className="grid-header">

@@ -57,7 +57,7 @@ html, body {
 }
 .container { max-width: 1140px; margin: 0 auto; padding: 18px; }
 
-/* Верхняя панель с анимированным брендом */
+/* Верхняя панель — анимированный бренд, без обводки */
 .topbar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -76,11 +76,10 @@ html, body {
   -webkit-background-clip: text; color: transparent;
   cursor: pointer;
   transition: transform .2s ease;
+  border: none;
 }
 .tox-brand:hover { transform: translateY(-1px); }
-.tox-brand__glow {
-  position: relative;
-}
+.tox-brand__glow { position: relative; }
 .tox-brand::after {
   content: "";
   position: absolute; inset: -8px -12px -8px -12px;
@@ -127,6 +126,7 @@ html, body {
   padding: 12px 16px;
   font-weight: 800;
   transition: transform .12s ease, box-shadow .12s ease;
+  border: none;
 }
 .tox-button:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,255,102,.18); }
 .tox-button:disabled { opacity: .5; cursor: not-allowed; }
@@ -137,7 +137,7 @@ html, body {
 .input { background: #121317; color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-weight: 700; width: 100%; }
 .input:focus { outline: none; border-color: var(--neon-2); box-shadow: 0 0 0 3px rgba(0,255,102,.15); }
 
-/* Сетка устройств и статусы */
+/* Сетка устройств и статусы — без резких красных пикселей */
 .devices-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .device-tile {
   position: relative;
@@ -148,19 +148,20 @@ html, body {
   animation: fadeInUp .4s ease both;
 }
 .device-tile--std { background: linear-gradient(180deg, #181a1e, #121317); }
-/* Убрали VIP-обводку */
+/* VIP — без обводки, просто более мягкий фон */
 .device-tile--vip { background: linear-gradient(180deg, #1a1c20, #121317); }
 .device-tile--ps5 {
-  background: radial-gradient(140px at 20% 80%, rgba(160,180,255,.16), rgba(45,88,255,.16)), linear-gradient(180deg, #181a1e, #121317);
+  background: radial-gradient(140px at 20% 80%, rgba(160,180,255,.14), rgba(45,88,255,.13)), linear-gradient(180deg, #181a1e, #121317);
 }
-.device-tile--busy::before { content: ""; position: absolute; inset: 0; background: rgba(255,120,120,.12); pointer-events: none; }
-.device-tile--booked { filter: grayscale(.15) saturate(.96) brightness(.96); }
-.device-tile--booked::before { content: ""; position: absolute; inset: 0; background: rgba(255,80,80,.16); backdrop-filter: blur(1.2px); pointer-events: none; }
+/* Занято/забронировано — лёгкие, без «пикселей» */
+.device-tile--busy::before { content: ""; position: absolute; inset: 0; background: rgba(255,120,120,.10); pointer-events: none; }
+.device-tile--booked { filter: grayscale(.06) saturate(.98) brightness(.98); }
+.device-tile--booked::before { content: ""; position: absolute; inset: 0; background: rgba(255,80,80,.10); pointer-events: none; }
 
 .device-tile__label { font-weight: 900; font-size: 16px; letter-spacing: .01em; text-align: center; }
 .device-dot { position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; border-radius: 999px; }
-.device-dot--ok { background: linear-gradient(135deg,#8fff00,#00ff66); box-shadow: 0 0 6px rgba(0,255,102,.35); }
-.device-dot--bad { background: #ff5a5a; }
+.device-dot--ok { background: linear-gradient(135deg,#8fff00,#00ff66); box-shadow: 0 0 6px rgba(0,255,102,.28); }
+.device-dot--bad { background: #ff7b7b; box-shadow: 0 0 6px rgba(255,80,80,.2); }
 
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -181,10 +182,7 @@ html, body {
 .profile-label { color: var(--muted); font-size: 12px; }
 .profile-value { font-weight: 900; font-size: 18px; }
 .history-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.history-item {
-  display: flex; justify-content: space-between;
-  border: 1px solid var(--border); border-radius: 10px; padding: 10px;
-}
+.history-item { display: flex; justify-content: space-between; border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
 .history-label { font-weight: 700; }
 .history-date { color: var(--muted); font-size: 12px; }
 .muted { color: var(--muted); }
@@ -221,7 +219,7 @@ html, body {
 }
 .mobile-nav__btn.active { color: var(--neon-2); }
 
-/* Modal (регистрация) */
+/* Modal (регистрация) — аккуратно центр */
 .modal { position: fixed; inset: 0; z-index: 2000; }
 .modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(1px); }
 .modal__dialog {
@@ -235,7 +233,7 @@ html, body {
 .modal__header { margin-bottom: 12px; }
 .modal__content { display: grid; gap: 8px; }
 
-/* Loader — вернули загрузку приложения */
+/* Loader — загрузка приложения + прогресс бар */
 .loader-screen {
   position: fixed; inset: 0;
   background: var(--bg-0);
@@ -284,3 +282,4 @@ html, body {
   }
   .toast, .loader-screen { animation: none !important; }
 }
+

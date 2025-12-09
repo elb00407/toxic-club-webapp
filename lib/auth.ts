@@ -7,6 +7,16 @@ export type LocalUser = {
 
 const KEY_USER = "toxicskill_user";
 
+// попытка авто-детекта Telegram WebApp, если доступно
+function getTelegramUsername(): string | undefined {
+  try {
+    const tg = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.username;
+    return tg ? `@${String(tg)}`.toLowerCase() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function getUser(): LocalUser | null {
   const raw = typeof window !== "undefined" ? localStorage.getItem(KEY_USER) : null;
   return raw ? (JSON.parse(raw) as LocalUser) : null;
@@ -20,7 +30,18 @@ export function logoutUser() {
   localStorage.removeItem(KEY_USER);
 }
 
+export function ensureAdminFlag() {
+  const user = getUser();
+  const tg = getTelegramUsername();
+  if (user && tg && tg === "@maks_lavrow") {
+    // если мы в Telegram и юзер — ты, проставим telegram локально для стабильного isAdmin()
+    const updated = { ...user, telegram: tg };
+    saveUser(updated);
+  }
+}
+
 export function isAdmin(user: LocalUser | null): boolean {
   if (!user) return false;
-  return (user.telegram ?? "").toLowerCase() === "@maks_lavrow";
+  const tg = user.telegram ?? getTelegramUsername();
+  return (tg ?? "").toLowerCase() === "@maks_lavrow";
 }

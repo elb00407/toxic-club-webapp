@@ -8,6 +8,7 @@ import ProfileHistory from "@/components/ProfileHistory";
 import AdminPanel from "@/components/AdminPanel";
 import { useEffect, useMemo, useState } from "react";
 import { devices as baseDevices } from "@/lib/devices";
+import { getUser, isAdmin, ensureAdminFlag } from "@/lib/auth";
 
 type Picked = { id: string; platform: "PC" | "PS5"; label: string; isVip?: boolean };
 type Tab = "STANDARD" | "VIP" | "CONSOLE";
@@ -18,8 +19,9 @@ export default function Page() {
   const [tab, setTab] = useState<Tab>("STANDARD");
   const [screen, setScreen] = useState<Screen>("home");
   const [devices, setDevices] = useState(baseDevices);
+  const [adminAllowed, setAdminAllowed] = useState(false);
 
-  // демо "онлайн" обновления статуса
+  // демо "онлайн" обновления статуса — без резких красных эффектов
   useEffect(() => {
     const id = setInterval(() => {
       setDevices((prev) =>
@@ -43,6 +45,12 @@ export default function Page() {
     const t = localStorage.getItem("toxicskill_theme");
     const html = document.documentElement;
     if (t) html.setAttribute("data-theme", t);
+  }, []);
+
+  useEffect(() => {
+    ensureAdminFlag();
+    const u = getUser();
+    setAdminAllowed(isAdmin(u));
   }, []);
 
   const filtered = useMemo(() => {
@@ -93,7 +101,9 @@ export default function Page() {
                 <button className={`tab ${tab === "STANDARD" ? "tab--active" : ""}`} onClick={() => setTab("STANDARD")}>Standard</button>
                 <button className={`tab ${tab === "VIP" ? "tab--active" : ""}`} onClick={() => setTab("VIP")}>VIP</button>
                 <button className={`tab ${tab === "CONSOLE" ? "tab--active" : ""}`} onClick={() => setTab("CONSOLE")}>Console</button>
-                <button className="tab" onClick={() => setScreen("admin")}>Admin</button>
+                {adminAllowed && (
+                  <button className="tab" onClick={() => setScreen("admin")}>Admin</button>
+                )}
               </div>
 
               <div className="grid-header">
@@ -147,7 +157,7 @@ export default function Page() {
             </div>
           )}
 
-          {screen === "admin" && (
+          {screen === "admin" && adminAllowed && (
             <AdminPanel />
           )}
         </main>
