@@ -1,4 +1,5 @@
 "use client";
+import DeviceTile from "./DeviceTile";
 import type { DeviceItem } from "@/lib/devices";
 
 export default function DeviceGrid({
@@ -9,19 +10,12 @@ export default function DeviceGrid({
   onPick: (d: DeviceItem) => void;
 }) {
   return (
-    <div className="devices-grid">
-      {items.map((d) => (
-        <button
-          key={d.id}
-          className={`device-tile ${d.isVip ? "device-tile--vip" : ""}`}
-          onClick={() => onPick(d)}
-        >
-          <div className="device-title">{d.label}</div>
-          <div className="device-subtitle">
-            {d.platform === "PS5" ? "PlayStation 5" : d.isVip ? "ПК VIP" : "ПК"}
-          </div>
-        </button>
-      ))}
+    <div className="devices-grid-wrapper">
+      <div className="devices-grid">
+        {items.map((d) => (
+          <DeviceTile key={d.id} d={d} onPick={onPick} />
+        ))}
+      </div>
     </div>
   );
 }

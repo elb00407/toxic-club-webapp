@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function BookingForm({
   pcId,
@@ -29,32 +29,31 @@ export default function BookingForm({
 
   const quickDate = (type: "today" | "tomorrow" | "weekend") => {
     const now = new Date();
-    if (type === "today") {
-      setDate(now.toISOString().slice(0, 10));
-    } else if (type === "tomorrow") {
+    if (type === "today") setDate(now.toISOString().slice(0, 10));
+    else if (type === "tomorrow") {
       const t = new Date(now);
       t.setDate(now.getDate() + 1);
       setDate(t.toISOString().slice(0, 10));
     } else {
-      // ближайшая суббота
       const t = new Date(now);
-      const day = t.getDay(); // 0 вс - 6 сб
+      const day = t.getDay();
       const diff = (6 - day + 7) % 7;
       t.setDate(now.getDate() + diff);
       setDate(t.toISOString().slice(0, 10));
     }
   };
 
+  // таймер обратного отсчёта (демо: после брони можно считать до конца)
+  const countdownLabel = useMemo(() => {
+    const endHour = time + hours;
+    return `Сессия: ${time}:00 → ${endHour}:00`;
+  }, [time, hours]);
+
   return (
     <div className="booking-grid">
       <div className="field">
         <label className="field-label">Дата</label>
-        <input
-          type="date"
-          className="input calendar-input"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+        <input type="date" className="input" value={date} onChange={(e) => setDate(e.target.value)} />
         <div className="preset-buttons">
           <button className="tox-button tox-button--ghost" onClick={() => quickDate("today")}>Сегодня</button>
           <button className="tox-button tox-button--ghost" onClick={() => quickDate("tomorrow")}>Завтра</button>
@@ -64,40 +63,22 @@ export default function BookingForm({
 
       <div className="field">
         <label className="field-label">Время начала: {time}:00</label>
-        <input
-          type="range"
-          className="slider"
-          min={10}
-          max={23}
-          value={time}
-          onChange={(e) => setTime(Number(e.target.value))}
-        />
-        <div className="slider-scale">
-          <span>10:00</span><span>—</span><span>23:00</span>
-        </div>
+        <input type="range" className="slider" min={10} max={23} value={time} onChange={(e) => setTime(Number(e.target.value))} />
+        <div className="slider-scale"><span>10:00</span><span>—</span><span>23:00</span></div>
       </div>
 
       <div className="field">
         <label className="field-label">Длительность: {hours} ч</label>
-        <input
-          type="range"
-          className="slider"
-          min={1}
-          max={maxDuration}
-          value={hours}
-          onChange={(e) => setHours(Number(e.target.value))}
-        />
-        <div className="slider-scale">
-          <span>1 ч</span><span>—</span><span>{maxDuration} ч</span>
-        </div>
+        <input type="range" className="slider" min={1} max={maxDuration} value={hours} onChange={(e) => setHours(Number(e.target.value))} />
+        <div className="slider-scale"><span>1 ч</span><span>—</span><span>{maxDuration} ч</span></div>
         <div className="preset-buttons">
           {[1, 2, 3].map((h) => (
-            <button key={h} className="tox-button tox-button--ghost" onClick={() => setHours(h)}>
-              {h} ч
-            </button>
+            <button key={h} className="tox-button tox-button--ghost" onClick={() => setHours(h)}>{h} ч</button>
           ))}
         </div>
       </div>
+
+      <div className="grid-subtitle">{countdownLabel}</div>
 
       <div className="booking-actions">
         <button className="tox-button" onClick={submit}>Забронировать</button>

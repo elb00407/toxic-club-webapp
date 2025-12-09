@@ -1,41 +1,37 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-type Booking = { id: string; pcId: string; label: string; ts: number };
+type Booking = { id: string; pcId: string; label: string; ts: number; hours?: number };
 type User = { id: string; nickname: string };
 
 export default function ProfileHistory() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [user, setUser] = useState<User | null>(null);
-  const [theme, setTheme] = useState<"day" | "night">("day");
+  const [theme, setTheme] = useState<"day" | "night" | "neon" | "classic">("day");
 
   useEffect(() => {
-    try {
-      const rawB = localStorage.getItem("toxicskill_bookings");
-      const rawU = localStorage.getItem("toxicskill_user");
-      const rawT = localStorage.getItem("toxicskill_theme");
-      setBookings(rawB ? JSON.parse(rawB) : []);
-      setUser(rawU ? JSON.parse(rawU) : null);
-      const t = rawT === "night" ? "night" : "day";
-      setTheme(t);
-      applyTheme(t);
-    } catch {
-      setBookings([]);
-      setUser(null);
-    }
+    const rawB = localStorage.getItem("toxicskill_bookings");
+    const rawU = localStorage.getItem("toxicskill_user");
+    const rawT = localStorage.getItem("toxicskill_theme");
+    setBookings(rawB ? JSON.parse(rawB) : []);
+    setUser(rawU ? JSON.parse(rawU) : null);
+    const t = (rawT as typeof theme) ?? "day";
+    setTheme(t);
+    applyTheme(t);
   }, []);
 
-  const applyTheme = (t: "day" | "night") => {
+  const applyTheme = (t: "day" | "night" | "neon" | "classic") => {
     const el = document.documentElement;
-    if (t === "night") el.setAttribute("data-theme", "night");
-    else el.removeAttribute("data-theme");
+    el.setAttribute("data-theme", t);
     localStorage.setItem("toxicskill_theme", t);
   };
 
-  const toggleTheme = () => {
-    const next = theme === "night" ? "day" : "night";
+  const switchTheme = () => {
+    const order: ("day" | "night" | "neon" | "classic")[] = ["day", "night", "neon", "classic"];
+    const next = order[(order.indexOf(theme) + 1) % order.length];
     setTheme(next);
     applyTheme(next);
+    showToast(`Тема: ${next}`);
   };
 
   const clearHistory = () => {
@@ -45,13 +41,11 @@ export default function ProfileHistory() {
   };
 
   const showToast = (msg: string) => {
-    const id = `toast-${Date.now()}`;
     const container = document.getElementById("toast-container");
     if (!container) return;
     const el = document.createElement("div");
     el.className = "toast";
     el.textContent = msg;
-    el.id = id;
     container.appendChild(el);
     setTimeout(() => el.classList.add("toast--show"), 10);
     setTimeout(() => {
@@ -59,6 +53,18 @@ export default function ProfileHistory() {
       setTimeout(() => el.remove(), 200);
     }, 2000);
   };
+
+  // рейтинг/ачивки
+  const stats = useMemo(() => {
+    const totalBookings = bookings.length;
+    const totalHours = bookings.reduce((acc, b) => acc + (b.hours ?? 2), 0);
+    const level = totalHours >= 50 ? "Legend" : totalHours >= 20 ? "Pro" : totalHours >= 10 ? "Regular" : "Newbie";
+    const achievements = [
+      totalHours >= 10 ? "10+ часов" : null,
+      totalBookings >= 5 ? "5 броней" : null,
+    ].filter(Boolean) as string[];
+    return { totalBookings, totalHours, level, achievements };
+  }, [bookings]);
 
   return (
     <div>
@@ -68,8 +74,8 @@ export default function ProfileHistory() {
           <div className="profile-value">{user?.nickname ?? "—"}</div>
         </div>
         <div className="profile-actions">
-          <button className="tox-button tox-button--ghost" onClick={toggleTheme}>
-            Тема: {theme === "night" ? "Ночь" : "День"}
+          <button className="tox-button tox-button--ghost" onClick={switchTheme}>
+            Тема: {theme}
           </button>
           <button className="tox-button tox-button--ghost" onClick={clearHistory}>
             Очистить историю
@@ -77,7 +83,22 @@ export default function ProfileHistory() {
         </div>
       </div>
 
-      <div className="grid-header">
+      <div className="card">
+        <div className="grid-header">
+          <div className="grid-title">Рейтинг</div>
+          <div className="grid-subtitle">Ваш прогресс</div>
+        </div>
+        <div className="history-list">
+          <div className="history-item"><span className="history-label">Броней</span><span className="history-date">{stats.totalBookings}</span></div>
+          <div className="history-item"><span className="history-label">Часы</span><span className="history-date">{stats.totalHours}</span></div>
+          <div className="history-item"><span className="history-label">Уровень</span><span className="history-date">{stats.level}</span></div>
+        </div>
+        {stats.achievements.length ? (
+          <div className="grid-subtitle" style={{ marginTop: 8 }}>Ачивки: {stats.achievements.join(" • ")}</div>
+        ) : null}
+      </div>
+
+      <div className="grid-header" style={{ marginTop: 12 }}>
         <div className="grid-title">История броней</div>
         <div className="grid-subtitle">Последние операции</div>
       </div>
@@ -97,6 +118,8 @@ export default function ProfileHistory() {
             ))}
         </ul>
       )}
+
+      <div id="toast-container" className="toast-container" aria-live="polite" aria-atomic="true" />
     </div>
   );
 }

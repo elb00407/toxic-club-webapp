@@ -3,34 +3,34 @@ export type DeviceItem = {
   label: string;
   platform: "PC" | "PS5";
   isVip?: boolean;
+  busyState?: "free" | "busy" | "booked";
+  specs?: { cpu: string; gpu: string; ram: string };
 };
 
-// Генерация Standard: Toxic1..Toxic16
-const standardPCs: DeviceItem[] = Array.from({ length: 16 }, (_, i) => {
-  const n = i + 1;
-  return {
-    id: `pc-${n}`,
-    label: `Toxic${n}`,
-    platform: "PC",
-    isVip: false,
-  };
-});
+const stdSpecs = { cpu: "Ryzen 5 5600", gpu: "RTX 3060 Ti / 4060", ram: "16 GB" };
+const vipSpecs = { cpu: "Intel i5-13400F", gpu: "RTX 4060 Ti", ram: "32 GB" };
 
-// Генерация VIP: ToxicV1..ToxicV5
-const vipPCs: DeviceItem[] = Array.from({ length: 5 }, (_, i) => {
-  const n = i + 1;
-  return {
-    id: `pc-v${n}`,
-    label: `ToxicV${n}`,
-    platform: "PC",
-    isVip: true,
-  };
-});
+const standardPCs: DeviceItem[] = Array.from({ length: 16 }, (_, i) => ({
+  id: `pc-${i + 1}`,
+  label: `Toxic${i + 1}`,
+  platform: "PC",
+  isVip: false,
+  busyState: "free",
+  specs: stdSpecs,
+}));
 
-// Консоли при необходимости
+const vipPCs: DeviceItem[] = Array.from({ length: 5 }, (_, i) => ({
+  id: `pc-v${i + 1}`,
+  label: `ToxicV${i + 1}`,
+  platform: "PC",
+  isVip: true,
+  busyState: "free",
+  specs: vipSpecs,
+}));
+
 const consoles: DeviceItem[] = [
-  { id: "ps5-1", label: "PS5-A", platform: "PS5" },
-  { id: "ps5-2", label: "PS5-B", platform: "PS5" },
+  { id: "ps5-1", label: "PS5-A", platform: "PS5", busyState: "free", specs: { cpu: "Zen 2", gpu: "RDNA 2", ram: "16 GB" } },
+  { id: "ps5-2", label: "PS5-B", platform: "PS5", busyState: "free", specs: { cpu: "Zen 2", gpu: "RDNA 2", ram: "16 GB" } },
 ];
 
 export const devices: DeviceItem[] = [...standardPCs, ...vipPCs, ...consoles];
