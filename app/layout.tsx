@@ -1,5 +1,4 @@
 import "./globals.css";
-import LoaderWrapper from "@/components/LoaderWrapper";
 
 export const metadata = {
   title: "toxicskill",
@@ -9,9 +8,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
-      <body>
-        <LoaderWrapper>{children}</LoaderWrapper>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

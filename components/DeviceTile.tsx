@@ -9,7 +9,7 @@ export default function DeviceTile({ d, onPick }: { d: DeviceItem; onPick: (d: D
     d.busyState === "booked" ? "device-tile--booked" : d.busyState === "busy" ? "device-tile--busy" : "";
 
   return (
-    <button className={`${baseClass} ${stateClass}`} onClick={() => onPick(d)}>
+    <button className={`${baseClass} ${stateClass}`} onClick={() => onPick(d)} aria-label={d.label}>
       <div className="device-tile__badge">{d.isVip ? "VIP" : "STD"}</div>
       <div className={`device-dot ${d.busyState === "free" ? "device-dot--ok" : "device-dot--bad"}`} />
       <div className="device-tile__label">{d.label}</div>

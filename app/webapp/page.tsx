@@ -19,6 +19,22 @@ export default function Page() {
   const [screen, setScreen] = useState<Screen>("home");
   const [devices, setDevices] = useState(baseDevices);
 
+  // демо "онлайн" обновления статуса
+  useEffect(() => {
+    const id = setInterval(() => {
+      setDevices((prev) =>
+        prev.map((d) => {
+          if (Math.random() < 0.08) {
+            const states: ("free" | "busy" | "booked")[] = ["free", "busy", "booked"];
+            return { ...d, busyState: states[Math.floor(Math.random() * states.length)] };
+          }
+          return d;
+        })
+      );
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("toxicskill_devices", JSON.stringify(devices));
   }, [devices]);
@@ -40,7 +56,7 @@ export default function Page() {
     setScreen("book");
   };
 
-  const handleNavigate = (navTab: string) => {
+  const handleNavigate = (navTab: "home" | "book" | "profile") => {
     if (navTab === "home") {
       setScreen("home");
       setPicked(null);
@@ -112,10 +128,10 @@ export default function Page() {
                 pcId={picked.id}
                 platform={picked.platform}
                 onCancel={() => { setPicked(null); setScreen("home"); }}
-                onBooked={(orderId) => {
+                onBooked={(orderId, hours) => {
                   const raw = localStorage.getItem("toxicskill_bookings");
                   const list = raw ? JSON.parse(raw) : [];
-                  list.push({ id: orderId, pcId: picked.id, label: picked.label, ts: Date.now(), hours: 2 });
+                  list.push({ id: orderId, pcId: picked.id, label: picked.label, ts: Date.now(), hours });
                   localStorage.setItem("toxicskill_bookings", JSON.stringify(list));
                   setDevices((prev) => prev.map((dv) => (dv.id === picked.id ? { ...dv, busyState: "booked" } : dv)));
                   toast("Бронь создана");

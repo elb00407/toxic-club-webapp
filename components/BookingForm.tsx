@@ -10,7 +10,7 @@ export default function BookingForm({
   pcId: string;
   platform: "PC" | "PS5";
   onCancel: () => void;
-  onBooked: (orderId: string) => void;
+  onBooked: (orderId: string, hours: number) => void;
 }) {
   const [date, setDate] = useState<string>("");
   const [time, setTime] = useState<number>(12);
@@ -24,7 +24,7 @@ export default function BookingForm({
       return;
     }
     const orderId = `order-${pcId}-${Date.now()}`;
-    onBooked(orderId);
+    onBooked(orderId, hours);
   };
 
   const quickDate = (type: "today" | "tomorrow" | "weekend") => {

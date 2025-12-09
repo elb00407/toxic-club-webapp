@@ -1,16 +1,17 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { DeviceItem } from "@/lib/devices";
+import { getUser, isAdmin } from "@/lib/auth";
 
 export default function AdminPanel() {
   const [devices, setDevices] = useState<DeviceItem[]>([]);
-  const [users, setUsers] = useState<{ id: string; nickname: string; banned?: boolean }[]>([]);
+  const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
+    const user = getUser();
+    setAllowed(isAdmin(user));
     const raw = localStorage.getItem("toxicskill_devices");
-    if (raw) setDevices(JSON.parse(raw));
-    const u = localStorage.getItem("toxicskill_user");
-    setUsers(u ? [JSON.parse(u)] : []);
+    setDevices(raw ? JSON.parse(raw) : []);
   }, []);
 
   const updateDeviceState = (id: string, state: DeviceItem["busyState"]) => {
@@ -19,19 +20,58 @@ export default function AdminPanel() {
     localStorage.setItem("toxicskill_devices", JSON.stringify(next));
   };
 
-  const toggleBan = (id: string) => {
-    const next = users.map((u) => (u.id === id ? { ...u, banned: !u.banned } : u));
-    setUsers(next);
-  };
+  const usageStats = useMemo(() => {
+    const total = devices.length;
+    const free = devices.filter((d) => d.busyState === "free").length;
+    const busy = devices.filter((d) => d.busyState === "busy").length;
+    const booked = devices.filter((d) => d.busyState === "booked").length;
+    return { total, free, busy, booked };
+  }, [devices]);
+
+  if (!allowed) {
+    return (
+      <div className="card">
+        <div className="grid-header">
+          <div className="grid-title">Доступ запрещён</div>
+          <div className="grid-subtitle">Админ‑панель доступна только владельцу</div>
+        </div>
+        <div className="muted">Свяжитесь с администратором для получения прав</div>
+      </div>
+    );
+  }
 
   return (
     <div className="card">
       <div className="grid-header">
         <div className="grid-title">Админ‑панель</div>
-        <div className="grid-subtitle">Устройства и пользователи</div>
+        <div className="grid-subtitle">Управление устройствами и статистика</div>
       </div>
 
       <div className="history-list" style={{ marginBottom: 12 }}>
+        <div className="history-item">
+          <span className="history-label">Устройств</span>
+          <span className="history-date">{usageStats.total}</span>
+        </div>
+        <div className="history-item">
+          <span className="history-label">Свободны</span>
+          <span className="history-date">{usageStats.free}</span>
+        </div>
+        <div className="history-item">
+          <span className="history-label">Заняты</span>
+          <span className="history-date">{usageStats.busy}</span>
+        </div>
+        <div className="history-item">
+          <span className="history-label">Забронированы</span>
+          <span className="history-date">{usageStats.booked}</span>
+        </div>
+      </div>
+
+      <div className="grid-header">
+        <div className="grid-title">Устройства</div>
+        <div className="grid-subtitle">Статусы и операции</div>
+      </div>
+
+      <div className="history-list">
         {devices.length === 0 ? <div className="muted">Нет устройств</div> : null}
         {devices.map((d) => (
           <div key={d.id} className="history-item">
@@ -42,23 +82,6 @@ export default function AdminPanel() {
               <button className="tox-button tox-button--ghost" onClick={() => updateDeviceState(d.id, "busy")}>Busy</button>
               <button className="tox-button tox-button--ghost" onClick={() => updateDeviceState(d.id, "booked")}>Booked</button>
             </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid-header">
-        <div className="grid-title">Пользователи</div>
-        <div className="grid-subtitle">Управление доступом</div>
-      </div>
-      <div className="history-list">
-        {users.length === 0 ? <div className="muted">Нет пользователей</div> : null}
-        {users.map((u) => (
-          <div key={u.id} className="history-item">
-            <span className="history-label">{u.nickname}</span>
-            <span className="history-date">{u.banned ? "Забанен" : "Активен"}</span>
-            <button className="tox-button tox-button--ghost" onClick={() => toggleBan(u.id)}>
-              {u.banned ? "Разбанить" : "Забанить"}
-            </button>
           </div>
         ))}
       </div>
