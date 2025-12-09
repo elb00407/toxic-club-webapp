@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function BookingForm({
   pcId,
@@ -43,7 +43,6 @@ export default function BookingForm({
     }
   };
 
-  // таймер обратного отсчёта (демо: после брони можно считать до конца)
   const countdownLabel = useMemo(() => {
     const endHour = time + hours;
     return `Сессия: ${time}:00 → ${endHour}:00`;

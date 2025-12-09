@@ -7,13 +7,8 @@ export default function AdminPanel() {
   const [users, setUsers] = useState<{ id: string; nickname: string; banned?: boolean }[]>([]);
 
   useEffect(() => {
-    // загружаем устройства из localStorage или gen
     const raw = localStorage.getItem("toxicskill_devices");
     if (raw) setDevices(JSON.parse(raw));
-    else {
-      // если не сохранены, оставим пусто — их предоставляет страница в props обычно
-    }
-
     const u = localStorage.getItem("toxicskill_user");
     setUsers(u ? [JSON.parse(u)] : []);
   }, []);
@@ -37,7 +32,7 @@ export default function AdminPanel() {
       </div>
 
       <div className="history-list" style={{ marginBottom: 12 }}>
-        {devices.length === 0 ? <div className="muted">Нет устройств в локальном кеше</div> : null}
+        {devices.length === 0 ? <div className="muted">Нет устройств</div> : null}
         {devices.map((d) => (
           <div key={d.id} className="history-item">
             <span className="history-label">{d.label}</span>

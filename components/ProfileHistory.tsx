@@ -54,7 +54,6 @@ export default function ProfileHistory() {
     }, 2000);
   };
 
-  // рейтинг/ачивки
   const stats = useMemo(() => {
     const totalBookings = bookings.length;
     const totalHours = bookings.reduce((acc, b) => acc + (b.hours ?? 2), 0);
@@ -62,6 +61,7 @@ export default function ProfileHistory() {
     const achievements = [
       totalHours >= 10 ? "10+ часов" : null,
       totalBookings >= 5 ? "5 броней" : null,
+      totalBookings >= 1 ? "Первая бронь" : null,
     ].filter(Boolean) as string[];
     return { totalBookings, totalHours, level, achievements };
   }, [bookings]);

@@ -20,11 +20,9 @@ export default function Page() {
   const [devices, setDevices] = useState(baseDevices);
 
   useEffect(() => {
-    // sync devices to localStorage for AdminPanel demo
     localStorage.setItem("toxicskill_devices", JSON.stringify(devices));
   }, [devices]);
 
-  // применить тему из localStorage
   useEffect(() => {
     const t = localStorage.getItem("toxicskill_theme");
     const html = document.documentElement;
@@ -119,7 +117,6 @@ export default function Page() {
                   const list = raw ? JSON.parse(raw) : [];
                   list.push({ id: orderId, pcId: picked.id, label: picked.label, ts: Date.now(), hours: 2 });
                   localStorage.setItem("toxicskill_bookings", JSON.stringify(list));
-                  // обновим статус устройства локально как booked
                   setDevices((prev) => prev.map((dv) => (dv.id === picked.id ? { ...dv, busyState: "booked" } : dv)));
                   toast("Бронь создана");
                   setScreen("profile");
