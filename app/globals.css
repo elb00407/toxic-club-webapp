@@ -309,3 +309,192 @@ html, body {
   padding: 8px 0;
   z-index: 1000;
 }
+/* Безопасные области для телефона */
+:root {
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+  --neon-1: #5af1b0;
+  --neon-2: #4bd1ff;
+  --border: #1c1f26;
+  --muted: #a0a6b3;
+}
+/* Фикс верхней панели и логотипа */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  padding-top: env(safe-area-inset-top);
+  background: #0a0b0d;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.tox-brand {
+  font-weight: 900; font-size: 20px;
+  background: linear-gradient(90deg, var(--neon-1), var(--neon-2));
+  -webkit-background-clip: text; color: transparent;
+}
+
+/* Контент с безопасными отступами */
+.content {
+  padding-top: calc(56px + env(safe-area-inset-top));
+  padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
+
+/* Нижняя навигация */
+.mobile-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #101215;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around;
+  padding: 8px 0;
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.mobile-nav__btn {
+  flex: 1;
+  background: none; border: none;
+  color: var(--muted);
+  font-size: 14px; font-weight: 700;
+  padding: 8px 0;
+}
+.mobile-nav__btn.active { color: var(--neon-2); }
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .devices-grid { grid-template-columns: repeat(2, 1fr); }
+  .card { border-radius: 14px; padding: 12px; }
+  .tox-button { width: 100%; font-size: 15px; padding: 14px; }
+  .tabs { flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .grid-title, .grid-subtitle { text-align: center; }
+  .booking-grid { grid-template-columns: 1fr; }
+}
+/* Preset buttons */
+.preset-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.preset-buttons .tox-button--ghost {
+  flex: 1;
+  font-size: 13px;
+  padding: 8px;
+}
+/* Safe area: с fallback для редактора */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Верхняя панель и логотип с безопасными отступами */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  padding-top: var(--safe-top);
+  background: var(--bg, #0a0b0d);
+  border-bottom: 1px solid var(--border, #1c1f26);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.tox-brand {
+  font-weight: 900; font-size: 20px;
+  background: linear-gradient(90deg, var(--neon-1, #5af1b0), var(--neon-2, #4bd1ff));
+  -webkit-background-clip: text; color: transparent;
+}
+
+/* Контент учитывает верх/низ */
+.content {
+  padding-top: calc(56px + var(--safe-top));
+  padding-bottom: calc(64px + var(--safe-bottom));
+}
+
+/* Нижняя навигация с safe area */
+.mobile-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #101215;
+  border-top: 1px solid var(--border, #1c1f26);
+  display: flex; justify-content: space-around;
+  padding: 8px 0;
+  z-index: 1000;
+  padding-bottom: var(--safe-bottom);
+}
+.mobile-nav__btn {
+  flex: 1;
+  background: none; border: none;
+  color: var(--muted, #a0a6b3);
+  font-size: 14px; font-weight: 700;
+  padding: 8px 0;
+}
+.mobile-nav__btn.active { color: var(--neon-2, #4bd1ff); }
+
+/* Мобильная адаптация: сетки, кнопки, формы */
+@media (max-width: 768px) {
+  .devices-grid { grid-template-columns: repeat(2, 1fr); }
+  .card { border-radius: 14px; padding: 12px; }
+  .tox-button { width: 100%; font-size: 15px; padding: 14px; }
+  .tabs { flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .grid-title, .grid-subtitle { text-align: center; }
+  .booking-grid { grid-template-columns: 1fr; }
+}
+
+/* Профиль */
+.profile-header {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px;
+}
+.profile-id { display: grid; gap: 4px; }
+.profile-label { color: var(--muted, #a0a6b3); font-size: 12px; }
+.profile-value { font-weight: 900; font-size: 18px; }
+
+/* История броней */
+.history-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.history-item { display: flex; justify-content: space-between; border: 1px solid var(--border, #1c1f26); border-radius: 10px; padding: 10px; }
+.history-label { font-weight: 700; }
+.history-date { color: var(--muted, #a0a6b3); font-size: 12px; }
+
+.muted { color: var(--muted, #a0a6b3); }
+
+/* Тост-уведомления (с ARIA контейнером) */
+.toast-container {
+  position: fixed;
+  bottom: calc(72px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid; gap: 8px;
+  z-index: 2000;
+}
+.toast {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .2s ease, transform .2s ease;
+  background: var(--surface, #0f1115);
+  border: 1px solid var(--border, #1c1f26);
+  color: var(--text, #e7ecf4);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.toast--show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Preset buttons для формы брони */
+.preset-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.preset-buttons .tox-button--ghost {
+  flex: 1;
+  font-size: 13px;
+  padding: 8px;
+}
+
+/* Предпочтения по анимациям: уважать reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  .toast, .loader-screen { animation: none !important; }
+}

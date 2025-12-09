@@ -1,56 +1,27 @@
 "use client";
-import DeviceTile from "./DeviceTile";
-import type { DeviceItem } from "@/lib/devices";
-import { useState } from "react";
+type Device = { id: string; label: string; platform: "PC" | "PS5"; isVip?: boolean };
 
 export default function DeviceGrid({
   items,
   onPick,
 }: {
-  items: DeviceItem[];
-  onPick: (item: DeviceItem) => void;
+  items: Device[];
+  onPick: (d: Device) => void;
 }) {
-  const [openSpecsId, setOpenSpecsId] = useState<string | null>(null);
-  const toggleSpecs = (id: string) => setOpenSpecsId((prev) => (prev === id ? null : id));
-
-  const current = items.find((i) => i.id === openSpecsId);
-  const currentSpecs = current?.specs ?? { cpu: "", gpu: "" };
-  const currentPeripherals = current?.peripherals ?? {};
-
   return (
-    <div className="devices-grid-wrapper">
-      <div className="devices-grid">
-        {items.map((d) => (
-          <DeviceTile
-            key={d.id}
-            d={{ ...d, specs: d.specs ?? { cpu: "", gpu: "" }, peripherals: d.peripherals ?? {} }}
-            onPick={onPick}
-            onSpecsToggle={toggleSpecs}
-          />
-        ))}
-      </div>
-
-      <div className={`specs-panel ${openSpecsId ? "specs-panel--open" : ""}`}>
-        {openSpecsId && (
-          <div className="specs-content">
-            <div className="specs-title">Характеристики</div>
-            <div className="specs-row"><span>CPU</span><div>{currentSpecs.cpu || "—"}</div></div>
-            <div className="specs-row"><span>GPU</span><div>{currentSpecs.gpu || "—"}</div></div>
-            {current && currentPeripherals && (
-              <>
-                <div className="specs-title mt-3">Периферия</div>
-                <div className="specs-row"><span>Клавиатура</span><div>{currentPeripherals.keyboard || "—"}</div></div>
-                <div className="specs-row"><span>Мышь</span><div>{currentPeripherals.mouse || "—"}</div></div>
-                <div className="specs-row"><span>Гарнитура</span><div>{currentPeripherals.headset || "—"}</div></div>
-                <div className="specs-row"><span>Монитор</span><div>{currentPeripherals.monitor || "—"}</div></div>
-              </>
-            )}
-            <div className="actions">
-              <button className="tox-button tox-button--sm" onClick={() => setOpenSpecsId(null)}>Закрыть</button>
-            </div>
+    <div className="devices-grid">
+      {items.map((d) => (
+        <button
+          key={d.id}
+          className={`device-tile ${d.isVip ? "device-tile--vip" : ""}`}
+          onClick={() => onPick(d)}
+        >
+          <div className="device-title">{d.label}</div>
+          <div className="device-subtitle">
+            {d.platform === "PS5" ? "PlayStation 5" : d.isVip ? "ПК VIP" : "ПК"}
           </div>
-        )}
-      </div>
+        </button>
+      ))}
     </div>
   );
 }

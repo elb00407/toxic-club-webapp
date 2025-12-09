@@ -1,8 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
-
-declare global { interface Window { Telegram?: any; } }
-
 export default function WebAppShell({
   children,
   onBrandClick,
@@ -10,35 +6,12 @@ export default function WebAppShell({
   children: React.ReactNode;
   onBrandClick?: () => void;
 }) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)");
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
-  // initData из Telegram, если есть
-  useEffect(() => {
-    const el = document.getElementById("__initData") as HTMLInputElement | null;
-    if (!el) return;
-    const tgInit = window.Telegram?.WebApp?.initData || "";
-    el.value = tgInit || "";
-  }, []);
-
   return (
-    <div className="min-h-screen">
-      <button
-        className={`tox-brand ${isMobile ? "tox-brand-static" : "tox-brand-animated"}`}
-        onClick={onBrandClick}
-        aria-label="Вернуться на главную"
-      >
-        toxicskill
-      </button>
-      <div className="container">{children}</div>
-      <input id="__initData" type="hidden" />
+    <div className="app-shell">
+      <header className="topbar">
+        <button className="tox-brand" onClick={onBrandClick}>toxicskill</button>
+      </header>
+      <div className="content">{children}</div>
     </div>
   );
 }
