@@ -3,6 +3,7 @@ import WebAppShell from "@/components/WebAppShell";
 import AuthGate from "@/components/AuthGate";
 import DeviceGrid from "@/components/DeviceGrid";
 import BookingForm from "@/components/BookingForm";
+import MobileNav from "@/components/MobileNav";
 import { useMemo, useState } from "react";
 import { devices } from "@/lib/devices";
 
@@ -18,6 +19,25 @@ export default function Page() {
     if (tab === "VIP") return devices.filter((d) => d.platform === "PC" && d.isVip);
     return devices.filter((d) => d.platform === "PS5");
   }, [tab]);
+
+  // обработчик для MobileNav
+  const handleNavigate = (navTab: string) => {
+    if (navTab === "home") {
+      setPicked(null);
+      setTab("STANDARD");
+    }
+    if (navTab === "book") {
+      // если выбран ПК/PS5, остаёмся в форме
+      if (!picked) {
+        // если ничего не выбрано, открываем стандартные ПК
+        setTab("STANDARD");
+      }
+    }
+    if (navTab === "profile") {
+      // здесь можно показать профиль пользователя
+      alert("Профиль пока в разработке");
+    }
+  };
 
   return (
     <WebAppShell onBrandClick={() => { setPicked(null); setTab("STANDARD"); }}>
@@ -68,14 +88,10 @@ export default function Page() {
             </>
           )}
         </main>
+
+        {/* Нижняя навигация для мобильных */}
+        <MobileNav onNavigate={handleNavigate} />
       </AuthGate>
     </WebAppShell>
   );
 }
-import MobileNav from "@/components/MobileNav";
-// внутри компонента Page:
-<MobileNav onNavigate={(tab) => {
-  if (tab === "home") setPicked(null);
-  if (tab === "book") {/* можно открыть форму */}
-  if (tab === "profile") {/* можно показать профиль */}
-}} />

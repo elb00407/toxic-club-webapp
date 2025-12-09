@@ -1,39 +1,44 @@
 "use client";
 import { useEffect, useState } from "react";
 
-type User = { id: string; username?: string; email?: string };
+type User = { id: string; nickname: string };
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [nickname, setNickname] = useState("");
-  const [email, setEmail] = useState("");
+
+  // поля для регистрации
+  const [phone, setPhone] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    const initEl = document.getElementById("__initData") as HTMLInputElement | null;
-    const initData = initEl?.value || "";
-
-    if (initData) {
-      setUser({ id: "telegram" });
-      setReady(true);
-      return;
-    }
-
     const raw = localStorage.getItem("toxicskill_user");
     if (raw) {
       try {
         const parsed = JSON.parse(raw) as User;
         setUser(parsed);
-        setReady(true);
-        return;
       } catch {}
     }
     setReady(true);
   }, []);
 
+  const generateNickname = () => {
+    const digits = phone.slice(-4);
+    const fn = firstName.trim().charAt(0).toUpperCase();
+    const ln = lastName.trim().charAt(0).toUpperCase();
+    return `${digits}${fn}${ln}`;
+  };
+
   const register = () => {
+    if (!phone || !firstName || !lastName || !password) {
+      alert("Заполните все поля");
+      return;
+    }
+    const nickname = generateNickname();
     const id = `local-${Date.now()}`;
-    const u: User = { id, username: nickname || undefined, email: email || undefined };
+    const u: User = { id, nickname };
     localStorage.setItem("toxicskill_user", JSON.stringify(u));
     setUser(u);
   };
@@ -43,22 +48,50 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     return (
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-title">Вход в toxicskill</div>
-          <div className="auth-subtitle">Создайте локальный профиль, если вы не в Telegram</div>
+          <div className="auth-title">Регистрация в toxicskill</div>
+          <div className="auth-subtitle">Введите данные для создания профиля</div>
         </div>
         <div className="auth-fields">
           <div className="field">
-            <label className="field-label">Никнейм</label>
-            <input className="input" placeholder="Например: tox-user" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+            <label className="field-label">Номер телефона</label>
+            <input
+              className="input"
+              placeholder="Например: +375291234567"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
           </div>
           <div className="field">
-            <label className="field-label">Email (необязательно)</label>
-            <input className="input" type="email" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <label className="field-label">Имя</label>
+            <input
+              className="input"
+              placeholder="Иван"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label className="field-label">Фамилия</label>
+            <input
+              className="input"
+              placeholder="Васильев"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label className="field-label">Пароль</label>
+            <input
+              className="input"
+              type="password"
+              placeholder="Введите пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
         </div>
         <div className="auth-actions">
-          <button className="tox-button" onClick={register}>Войти</button>
-          <div className="auth-hint">Данные хранятся локально на вашем устройстве.</div>
+          <button className="tox-button" onClick={register}>Зарегистрироваться</button>
         </div>
       </div>
     );
